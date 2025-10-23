@@ -1,11 +1,16 @@
-window.HELP = `<html>
-Just paste a video URL (copied from your browser address bar) and click the 'Download' button.<br><br>
-
-These utilities must be installed on your system:<br>
+window.HELP = `
+These utilities must be installed on your system to be able to download videos:<br>
 <li><i>yt-dlp</i> download utility<br>
 <li><i>ffmpeg</i> video conversion utility<br>
 <br>
-The Download Folder field is automatically filled with the default video folder
-of the detected OS but it can be overriden by selecting a different OS or
-by directly editing the field.<br>
-</html>`
+To download a video, just paste its video URL (copied from a browser address bar) and click the 'Download' button.
+`
+
+window.BRIDGE = `
+This web page must be opened by the program <i>ydownloader</i>
+that comes with this application. Otherwise the Download button is disabled.<br><br>
+<i>ydownloader</i> acts as a bridge between this web page and the operating
+system that can execute the <i>yt-dlp</i> utility.
+Once the bridge is up and running, this web page is opened automatically in your default browser.<br><br>
+This message will also appears if you try to reload this web page manually.
+`
