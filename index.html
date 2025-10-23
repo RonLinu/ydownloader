@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-- yt-dlp web -->
+<html lang="en">
+<head>
+    <title>Web Video Downloader</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="ydownloader.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="resources/multimedia.png">
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="resources/help.js"></script>
+    <script defer src="ydownloader.js"></script>
+</head>
+<body>
+    <h2><center>YDownloader</center></h2>
+    <div id="header">
+          <div class="url-row">
+            <label for="videoUrl" class="label-left">Video URL</label>
+            <input type="url" size="80" id="videoUrl" value="">
+            &nbsp;
+            <button id="download" type="button" disabled>Download</button>
+            <br><br>
+            <button id="help" type="button">Help</button>
+            &nbsp;
+            <button id="about" type="button">About</button>
+            &nbsp;
+            <button id="exit" type="button">Exit</button>
+          </div>
+    </div>
+        
+    <div id="selections">
+        <br>
+        <form>
+          <div class="form-sections">
+            <fieldset class="radio-section">
+              <legend>Resolution cap</legend>
+            </fieldset>
+
+            <fieldset class="checkbox-section">
+              <legend>Subtitle languages</legend>
+              <div class="checkbox-grid"></div>
+            </fieldset>
+          </div>
+        </form>
+
+      <br>
+      <div class="system-row">
+        <label for="folder" class="label-left">Download Folder</label>
+        <input type="text" size="40" id="folder" value="$HOME/Videos">
+         <div class="os-group">
+           <label><input type="radio" name="os" value="windows">Windows</label>
+           <label><input type="radio" name="os" value="linux">Linux</label>
+           <label><input type="radio" name="os" value="macos">MacOS</label>
+         </div>
+       </div>
+    </div>
+    
+    <br>    
+    <label id="footer"></label>
+
+</body>
+</html>
