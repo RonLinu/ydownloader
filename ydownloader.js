@@ -296,7 +296,7 @@ document.getElementById('exit').onclick = async function() {
 
 // 'Generate yt-dlp command' button click
 document.getElementById('download').onclick = function() {
-  var abbreviations, checked, checkedLanguages, command, i, index, isValidUrl, len, match, option_merging, option_resolution, option_subtitles, resolution, selectedResolution, subtitles, url, videoFolder, ytdlp, ytdlp_cmd;
+  var abbreviations, checked, checkedLanguages, command, i, index, isValidUrl, len, match, option_merging, option_resolution, option_subtitles, resolution, selectedResolution, subtitles, url, videoFolder, ytdlp_cmd;
   // Clear bottom screen from previously generated command (if any)
   document.getElementById('footer').innerHTML = "";
   // Local function to check URL validity
@@ -351,12 +351,11 @@ document.getElementById('download').onclick = function() {
     }
   }
   videoFolder = document.getElementById('folder').value.trim();
-  if (getOS() === "windows") {
-    ytdlp = 'yt-dlp.exe '; // yt-dlp has not PATH setup on Windows
-  } else {
-    ytdlp = 'yt-dlp ';
-  }
-  ytdlp_cmd = ytdlp + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + videoFolder + '" ' + option_resolution + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
+  //~ if getOS() is "windows"
+  //~ ytdlp = 'yt-dlp.exe '    # yt-dlp has not PATH setup on Windows
+  //~ else
+  //~ ytdlp = 'yt-dlp '
+  ytdlp_cmd = 'yt-dlp ' + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + videoFolder + '" ' + option_resolution + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
   // Push command to clipboard
   //~ navigator.clipboard.writeText(ytdlp_cmd.trim())
 
