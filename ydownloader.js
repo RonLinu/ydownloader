@@ -1,1 +1,371 @@
-var a0_0x3098d5=a0_0x44e9;(function(_0x3a62ba,_0x1ad9b9){var _0x4b7fde=a0_0x44e9,_0x363377=_0x3a62ba();while(!![]){try{var _0x554e80=-parseInt(_0x4b7fde(0x1f6))/0x1*(parseInt(_0x4b7fde(0x1e7))/0x2)+-parseInt(_0x4b7fde(0x1af))/0x3*(-parseInt(_0x4b7fde(0x20b))/0x4)+parseInt(_0x4b7fde(0x209))/0x5+parseInt(_0x4b7fde(0x207))/0x6+-parseInt(_0x4b7fde(0x1ff))/0x7+parseInt(_0x4b7fde(0x1b9))/0x8+parseInt(_0x4b7fde(0x1b2))/0x9;if(_0x554e80===_0x1ad9b9)break;else _0x363377['push'](_0x363377['shift']());}catch(_0x27cccf){_0x363377['push'](_0x363377['shift']());}}}(a0_0x53d5,0x6a2a2));var askConfirm,changeVideoFolder,connectWebSocket,getOS,identifier,languages,resolutions,showAlert,socket;function a0_0x44e9(_0x33a332,_0x25c3f4){var _0x53d57c=a0_0x53d5();return a0_0x44e9=function(_0x44e941,_0x57e83c){_0x44e941=_0x44e941-0x1a8;var _0x444d8c=_0x53d57c[_0x44e941];return _0x444d8c;},a0_0x44e9(_0x33a332,_0x25c3f4);}function a0_0x53d5(){var _0x3f6db3=['input[name=\x22resolutions\x22]:checked','The\x20application\x20and\x20the\x20web\x20socket\x20server\x20have\x20been\x20closed.','Win','type','left','setAttribute','folder','exit','Audio\x20only','--buffer-size\x2016M\x20','2160p\x20(4K)','videoUrl','radio','99769jfWjgM','download','The\x20Video\x20URL\x20is\x20invalid.','focus','360p\x20(LD)','unknown','windows','querySelector','for','2599135OXUQeo','appendChild',';\x20font-size:\x2016px;\x27>','match','onload','YDownloader\x201.0<br><br>\x0aUsing\x20CoffeeScript\x202.7<br><br>\x0aCopyright\x20©\x202025\x20-\x20RonLinu','getElementById','The\x20Video\x20URL\x20field\x20is\x20empty.','1038510FyXlNw','input','3041330iBzZGN','textContent','79588ahGHNK','%USERPROFILE%\x5cVideos','slice','Linux','createElement','ws://localhost:8080/ws','isConfirmed','addEventListener','WebSocket\x20connection\x20established','value','WebSocket\x20error\x20occurred','This\x20will\x20terminate\x20the\x20application.<br><br>Are\x20you\x20sure?','protocol','Yes','socket','about','log','trim','stringify','target','writeText','push','beforeunload','</div>','querySelectorAll','24hGkuSO','HELP','--embed-metadata\x20','2291571qfJdtt','1440p\x20(2K)','Help','length','footer','1080p\x20(full\x20HD)','resolutions','3273288WPEjmb','input[name=\x27os\x27][value=\x27','error','language','center','data','onmessage',']\x22\x20','checkbox','--merge-output-format\x20mkv\x20--remux-video\x20mkv\x20','.radio-section','createTextNode','-f\x20best\x20','name','480p\x20(SD)','platform','disabled','change','onclick','onclose','question','body','hash','Message\x20received:','No\x20cap','fil','<div\x20style=\x27text-align:\x20','$HOME/Videos','label','macos','checked','innerHTML','720p\x20(HD)','help','input[name=\x22language\x22]:checked','?list','input[name=\x22os\x22]','linux','onerror','indexOf','send','\x20--embed-subs\x20','execute','cd\x20/d\x20%CD%\x20&&\x20.yt-dlp.exe\x20','$HOME/Movies','fire','16KuGbQu','clipboard'];a0_0x53d5=function(){return _0x3f6db3;};return a0_0x53d5();}socket=null,identifier=location[a0_0x3098d5(0x1cf)],connectWebSocket=function(){var _0x9359a2=a0_0x3098d5;return socket=new WebSocket(_0x9359a2(0x210)),socket['onopen']=function(_0x1dcecf){var _0x31c28b=_0x9359a2;return console[_0x31c28b(0x21b)](_0x31c28b(0x213)),document[_0x31c28b(0x205)](_0x31c28b(0x1f7))[_0x31c28b(0x1c9)]=![];},socket[_0x9359a2(0x1df)]=function(_0x592c82){var _0x2a8378=_0x9359a2;return console[_0x2a8378(0x21b)](_0x2a8378(0x215)),document[_0x2a8378(0x1ce)][_0x2a8378(0x1d8)]='',showAlert('','',_0x2a8378(0x1ed),BRIDGE);},window[_0x9359a2(0x219)][_0x9359a2(0x1cc)]=function(_0x109969){var _0x2fe537=_0x9359a2;return console['log']('WebSocket\x20closed'),document[_0x2fe537(0x1ce)][_0x2fe537(0x1d8)]=_0x2fe537(0x1ea);},socket[_0x9359a2(0x1bf)]=function(_0x27dfad){var _0x4b58be=_0x9359a2;return console[_0x4b58be(0x21b)](_0x4b58be(0x1d0),_0x27dfad[_0x4b58be(0x1be)]);};},connectWebSocket(),window['addEventListener'](a0_0x3098d5(0x1ac),function(_0x364530){var _0x2ad5cd=a0_0x3098d5,_0x1ce936;return _0x1ce936=JSON[_0x2ad5cd(0x1a8)]({'id':identifier,'action':'exit','cmd':''}),socket['send'](_0x1ce936);}),window[a0_0x3098d5(0x203)]=function(){var _0x3b02a5=a0_0x3098d5,_0x4c2891;return document[_0x3b02a5(0x205)](_0x3b02a5(0x1f4))[_0x3b02a5(0x1f9)](),_0x4c2891=getOS(),_0x4c2891!==_0x3b02a5(0x1fb)?changeVideoFolder(_0x4c2891):changeVideoFolder(_0x3b02a5(0x1fc));},languages={'Afrikaans':'af','Amharic':'am','Arabic':'ar','Basque':'eu','Bengali':'bn','Bulgarian':'bg','Catalan':'ca','Chinese':'zh','Croatian':'hr','Czech':'cs','Danish':'da','Dutch':'nl','English':'en','Esperanto':'eo','Estonian':'et','Filipino':a0_0x3098d5(0x1d2),'Finnish':'fi','French':'fr','Galician':'gl','German':'de','Greek':'el','Hebrew':'he','Hindi':'hi','Hungarian':'hu','Icelandic':'is','Indonesian':'id','Irish':'ga','Italian':'it','Japanese':'ja','Korean':'ko','Latvian':'lv','Lithuanian':'lt','Malay':'ms','Norwegian':'no','Romanian':'ro','Russian':'ru','Serbian':'sr','Slovak':'sk','Slovenian':'sl','Spanish':'es','Swahili':'sw','Swedish':'sv','Tamil':'ta','Telugu':'te','Thai':'th','Turkish':'tr','Ukrainian':'uk','Vietnamese':'vi','Welsh':'cy','Xhosa':'xh','Zulu':'zu'},resolutions=[a0_0x3098d5(0x1fa),a0_0x3098d5(0x1c7),a0_0x3098d5(0x1d9),a0_0x3098d5(0x1b7),a0_0x3098d5(0x1b3),a0_0x3098d5(0x1f3),a0_0x3098d5(0x1d1),a0_0x3098d5(0x1f1)],(function(){var _0x4367fb=a0_0x3098d5,_0x3a077c,_0x2e910f,_0x1af4e8,_0x2558d0,_0x23a99a;_0x2e910f=document[_0x4367fb(0x1fd)]('.checkbox-grid'),_0x23a99a=[];for(_0x2558d0 in languages){_0x1af4e8=document[_0x4367fb(0x20f)](_0x4367fb(0x1d5)),_0x3a077c=document[_0x4367fb(0x20f)](_0x4367fb(0x208)),_0x3a077c[_0x4367fb(0x1ec)]=_0x4367fb(0x1c1),_0x3a077c[_0x4367fb(0x1c6)]=_0x4367fb(0x1bc),_0x3a077c[_0x4367fb(0x214)]=_0x2558d0,_0x2558d0==='English'&&(_0x3a077c[_0x4367fb(0x1d7)]=!![]),_0x1af4e8[_0x4367fb(0x200)](_0x3a077c),_0x1af4e8[_0x4367fb(0x200)](document[_0x4367fb(0x1c4)](_0x2558d0)),_0x23a99a['push'](_0x2e910f[_0x4367fb(0x200)](_0x1af4e8));}return _0x23a99a;}()),(function(){var _0x3470a0=a0_0x3098d5,_0x299ef6,_0x54fbcf,_0x29c657,_0x29e213,_0x56fd11,_0x47b5f8,_0x4e7ac5,_0x3d1539,_0x2fcafe;_0x2fcafe=[];for(_0x29e213=_0x29c657=0x0,_0x47b5f8=resolutions[_0x3470a0(0x1b5)];_0x29c657<_0x47b5f8;_0x29e213=++_0x29c657){_0x3d1539=resolutions[_0x29e213],_0x54fbcf=document['querySelector'](_0x3470a0(0x1c3)),_0x4e7ac5=document['createElement'](_0x3470a0(0x208)),_0x4e7ac5[_0x3470a0(0x1ec)]=_0x3470a0(0x1f5),_0x4e7ac5['id']=_0x29e213,_0x4e7ac5[_0x3470a0(0x1c6)]=_0x3470a0(0x1b8),_0x4e7ac5[_0x3470a0(0x214)]=_0x3d1539,_0x3d1539==='720p\x20(HD)'&&(_0x4e7ac5[_0x3470a0(0x1d7)]=!![]),_0x56fd11=document[_0x3470a0(0x20f)](_0x3470a0(0x1d5)),_0x56fd11[_0x3470a0(0x1ee)](_0x3470a0(0x1fe),_0x3d1539),_0x56fd11[_0x3470a0(0x20a)]=_0x3d1539,_0x54fbcf[_0x3470a0(0x200)](_0x4e7ac5),_0x54fbcf[_0x3470a0(0x200)](_0x56fd11),_0x299ef6=document[_0x3470a0(0x20f)]('br'),_0x2fcafe[_0x3470a0(0x1ab)](_0x54fbcf[_0x3470a0(0x200)](_0x299ef6));}return _0x2fcafe;}()),(function(){var _0x4b1297=a0_0x3098d5,_0xf76f18,_0x15c639,_0x4432ab,_0x1052c7,_0x17fc00,_0xe9da2d;_0x17fc00=function(_0x396a5f){var _0x1799c6=a0_0x44e9,_0x3671b3;return _0x3671b3=_0x396a5f[_0x1799c6(0x1a9)][_0x1799c6(0x214)],changeVideoFolder(_0x3671b3);},_0x1052c7=document[_0x4b1297(0x1ae)](_0x4b1297(0x1dd)),_0xe9da2d=[];for(_0xf76f18=0x0,_0x15c639=_0x1052c7[_0x4b1297(0x1b5)];_0xf76f18<_0x15c639;_0xf76f18++){_0x4432ab=_0x1052c7[_0xf76f18],_0xe9da2d['push'](_0x4432ab[_0x4b1297(0x212)](_0x4b1297(0x1ca),_0x17fc00));}return _0xe9da2d;}()),showAlert=function(_0x3208d1,_0x492b77,_0xffec54,_0x1327a4){var _0x27cb15=a0_0x3098d5;return Swal[_0x27cb15(0x1e6)]({'title':_0x3208d1,'html':_0x27cb15(0x1d3)+_0xffec54+_0x27cb15(0x201)+_0x1327a4+_0x27cb15(0x1ad),'icon':_0x492b77,'confirmButtonText':'OK','position':_0x27cb15(0x1bd),'animation':!![]});},askConfirm=function(_0x1c24dc,_0x30e195,_0x521945){var _0x3be8de=a0_0x3098d5;return Swal[_0x3be8de(0x1e6)]({'title':_0x1c24dc,'html':_0x521945,'icon':_0x30e195,'showCancelButton':!![],'confirmButtonText':_0x3be8de(0x218),'cancelButtonText':'No','focusCancel':!![],'position':'center'});},getOS=function(){var _0x1f3332=a0_0x3098d5,_0x38fa06;_0x38fa06=navigator[_0x1f3332(0x1c8)];switch(![]){case!(_0x38fa06[_0x1f3332(0x1e0)](_0x1f3332(0x1eb))>-0x1):return'windows';case!(_0x38fa06['indexOf']('Mac')>-0x1):return _0x1f3332(0x1d6);case!(_0x38fa06[_0x1f3332(0x1e0)](_0x1f3332(0x20e))>-0x1):return _0x1f3332(0x1de);default:return _0x1f3332(0x1fb);}},changeVideoFolder=function(_0x503541){var _0x5ca5c1=a0_0x3098d5,_0x197555;return _0x197555=document[_0x5ca5c1(0x205)]('folder'),_0x197555[_0x5ca5c1(0x214)]=(function(){var _0x3d4af4=_0x5ca5c1;switch(_0x503541){case _0x3d4af4(0x1de):return _0x3d4af4(0x1d4);case'windows':return _0x3d4af4(0x20c);case _0x3d4af4(0x1d6):return _0x3d4af4(0x1e5);}}()),document[_0x5ca5c1(0x1fd)](_0x5ca5c1(0x1ba)+_0x503541+'\x27]')[_0x5ca5c1(0x1d7)]=!![];},document[a0_0x3098d5(0x205)](a0_0x3098d5(0x21a))[a0_0x3098d5(0x1cb)]=function(){var _0x5494f4=a0_0x3098d5,_0x3b516d;return _0x3b516d=_0x5494f4(0x204),showAlert('','',_0x5494f4(0x1bd),_0x3b516d);},document[a0_0x3098d5(0x205)](a0_0x3098d5(0x1da))[a0_0x3098d5(0x1cb)]=function(){var _0x133d9f=a0_0x3098d5;return showAlert(_0x133d9f(0x1b4),'',_0x133d9f(0x1ed),window[_0x133d9f(0x1b0)]);},document['getElementById']('exit')[a0_0x3098d5(0x1cb)]=async function(){var _0x5123fa=a0_0x3098d5,_0xcc4951,_0x3375ec;_0x3375ec=await askConfirm('',_0x5123fa(0x1cd),_0x5123fa(0x216));if(_0x3375ec[_0x5123fa(0x211)])return _0xcc4951=JSON['stringify']({'id':identifier,'action':_0x5123fa(0x1f0),'cmd':''}),socket[_0x5123fa(0x1e1)](_0xcc4951),document[_0x5123fa(0x1ce)][_0x5123fa(0x1d8)]='';},document[a0_0x3098d5(0x205)]('download')[a0_0x3098d5(0x1cb)]=function(){var _0x4cd746=a0_0x3098d5,_0x1660af,_0x2650a3,_0x545ce4,_0x56abbf,_0xe5e2f2,_0x3d9e9b,_0x11cf97,_0x2618b5,_0x8800b9,_0x351aab,_0x39d8fb,_0x664813,_0x3bbb87,_0x485af3,_0x1b28e6,_0x4ae710,_0x8612fd,_0x4e1b1c,_0x495ce0;document[_0x4cd746(0x205)](_0x4cd746(0x1b6))[_0x4cd746(0x1d8)]='',_0x11cf97=function(_0x2be932){var _0x57e74e=_0x4cd746,_0x5e0534;try{return _0x5e0534=new URL(_0x2be932),_0x5e0534[_0x57e74e(0x217)]==='http:'||_0x5e0534[_0x57e74e(0x217)]==='https:';}catch(_0x4ca252){return![];}},_0x4ae710=document['getElementById'](_0x4cd746(0x1f4))[_0x4cd746(0x214)][_0x4cd746(0x21c)]();if(!_0x4ae710){showAlert('',_0x4cd746(0x1bb),'center',_0x4cd746(0x206));return;}else{if(!_0x11cf97(_0x4ae710)){showAlert('',_0x4cd746(0x1bb),_0x4cd746(0x1bd),_0x4cd746(0x1f8));return;}}_0x3d9e9b=_0x4ae710[_0x4cd746(0x1e0)](_0x4cd746(0x1dc));_0x3d9e9b!==-0x1&&(_0x4ae710=_0x4ae710[_0x4cd746(0x20d)](0x0,_0x3d9e9b));_0x39d8fb='',_0x664813='',_0x351aab='',_0x485af3=document[_0x4cd746(0x1fd)](_0x4cd746(0x1e9))[_0x4cd746(0x214)];if(_0x485af3===_0x4cd746(0x1d1))_0x39d8fb=_0x4cd746(0x1c5);else _0x485af3===_0x4cd746(0x1f1)?_0x39d8fb='-x\x20--audio-format\x20mp3\x20':(_0x8800b9=_0x485af3[_0x4cd746(0x202)](/^[^\d]*(\d+)/),_0x3bbb87=_0x8800b9[0x1],_0x39d8fb='-f\x20\x22bv[height<='+_0x3bbb87+']+ba/b[height<='+_0x3bbb87+_0x4cd746(0x1c0));if(_0x485af3!==_0x4cd746(0x1f1)){_0x351aab=_0x4cd746(0x1c2),_0x545ce4=document[_0x4cd746(0x1ae)](_0x4cd746(0x1db)),_0x1660af=[];for(_0xe5e2f2=0x0,_0x2618b5=_0x545ce4[_0x4cd746(0x1b5)];_0xe5e2f2<_0x2618b5;_0xe5e2f2++){_0x2650a3=_0x545ce4[_0xe5e2f2],_0x1660af['push'](languages[_0x2650a3[_0x4cd746(0x214)]]);}_0x1660af['length']&&(_0x1b28e6=_0x1660af['join'](','),_0x664813='--write-sub\x20--ignore-errors\x20--write-auto-subs\x20--sub-langs\x20'+_0x1b28e6+_0x4cd746(0x1e2));}return _0x8612fd=document[_0x4cd746(0x205)](_0x4cd746(0x1ef))[_0x4cd746(0x214)][_0x4cd746(0x21c)](),getOS()==='windows'?_0x4e1b1c=_0x4cd746(0x1e4):_0x4e1b1c='yt-dlp\x20',_0x495ce0=_0x4e1b1c+'--concurrent-fragments\x202\x20'+'--no-warnings\x20'+'-P\x20\x22'+_0x8612fd+'\x22\x20'+_0x39d8fb+_0x664813+_0x351aab+_0x4cd746(0x1b1)+_0x4cd746(0x1f2)+'\x22'+_0x4ae710+'\x22',navigator[_0x4cd746(0x1e8)][_0x4cd746(0x1aa)](_0x495ce0[_0x4cd746(0x21c)]()),_0x56abbf=JSON['stringify']({'id':identifier,'action':_0x4cd746(0x1e3),'cmd':_0x495ce0}),socket['send'](_0x56abbf);};
+// Generated by CoffeeScript 2.7.0
+var askConfirm, changeVideoFolder, connectWebSocket, getOS, identifier, languages, resolutions, showAlert, socket;
+
+socket = null;
+
+identifier = location.hash;
+
+connectWebSocket = function() {
+  socket = new WebSocket('ws://localhost:8080/ws');
+  socket.onopen = function(event) {
+    console.log('WebSocket connection established');
+    // Enable the Download button
+    return document.getElementById('download').disabled = false;
+  };
+  socket.onerror = function(event) {
+    return console.log('WebSocket error occurred');
+  };
+  //~ document.body.innerHTML = ''
+  //~ showAlert('', '', 'left', BRIDGE)
+  window.socket.onclose = function(event) {
+    console.log('WebSocket closed');
+    return document.body.innerHTML = 'This application and the web socket server have been closed.';
+  };
+  return socket.onmessage = function(event) {
+    return console.log('Message received:', event.data);
+  };
+};
+
+// Initiate the connection
+connectWebSocket();
+
+// --------------------------------------
+window.addEventListener('beforeunload', function(event) {
+  var command;
+  // Terminate the external socket server program
+  command = JSON.stringify({
+    id: identifier,
+    action: 'exit',
+    cmd: ""
+  });
+  return socket.send(command);
+});
+
+// --------------------------------------
+window.onload = function() {
+  var os;
+  // Conveniently focus on video URL field
+  document.getElementById('videoUrl').focus();
+  // Preset the video folder by detecting underlying OS
+  os = getOS();
+  if (os !== "unknown") {
+    return changeVideoFolder(os);
+  } else {
+    return changeVideoFolder('windows'); // make a wild guess
+  }
+};
+
+
+// --------------------------------------
+languages = {
+  "Afrikaans": "af",
+  "Amharic": "am",
+  "Arabic": "ar",
+  "Basque": "eu",
+  "Bengali": "bn",
+  "Bulgarian": "bg",
+  "Catalan": "ca",
+  "Chinese": "zh",
+  "Croatian": "hr",
+  "Czech": "cs",
+  "Danish": "da",
+  "Dutch": "nl",
+  "English": "en",
+  "Esperanto": "eo",
+  "Estonian": "et",
+  "Filipino": "fil",
+  "Finnish": "fi",
+  "French": "fr",
+  "Galician": "gl",
+  "German": "de",
+  "Greek": "el",
+  "Hebrew": "he",
+  "Hindi": "hi",
+  "Hungarian": "hu",
+  "Icelandic": "is",
+  "Indonesian": "id",
+  "Irish": "ga",
+  "Italian": "it",
+  "Japanese": "ja",
+  "Korean": "ko",
+  "Latvian": "lv",
+  "Lithuanian": "lt",
+  "Malay": "ms",
+  "Norwegian": "no",
+  "Romanian": "ro",
+  "Russian": "ru",
+  "Serbian": "sr",
+  "Slovak": "sk",
+  "Slovenian": "sl",
+  "Spanish": "es",
+  "Swahili": "sw",
+  "Swedish": "sv",
+  "Tamil": "ta",
+  "Telugu": "te",
+  "Thai": "th",
+  "Turkish": "tr",
+  "Ukrainian": "uk",
+  "Vietnamese": "vi",
+  "Welsh": "cy",
+  "Xhosa": "xh",
+  "Zulu": "zu"
+};
+
+resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'];
+
+(function() {  // *********************************************************************
+  var checkbox, container, label, language, results;
+  // Create checkbox panel with all supported languages
+  container = document.querySelector('.checkbox-grid');
+  results = [];
+  for (language in languages) {
+    // Create a label element
+    label = document.createElement('label');
+    // Create the checkbox input element
+    checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.name = 'language';
+    checkbox.value = language;
+    if (language === "English") {
+      checkbox.checked = true;
+    }
+    // Append the checkbox into the label
+    label.appendChild(checkbox);
+    // Add the label text node (for example "English")
+    label.appendChild(document.createTextNode(language));
+    // Append the label to the container
+    results.push(container.appendChild(label));
+  }
+  return results;
+})();
+
+(function() {  // --------------------------------------
+  var brTag, container, i, index, label, len, radio, resolution, results;
+// Create radio button panel with all supported video resolutions
+  results = [];
+  for (index = i = 0, len = resolutions.length; i < len; index = ++i) {
+    resolution = resolutions[index];
+    // Select the fieldset container where radio buttons are grouped
+    container = document.querySelector('.radio-section');
+    // Create a radio button
+    radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.id = index; // unique id
+    radio.name = 'resolutions'; // group name
+    radio.value = resolution;
+    if (resolution === "720p (HD)") {
+      radio.checked = true;
+    }
+    // Create label element for the radio button
+    label = document.createElement('label');
+    label.setAttribute('for', resolution);
+    label.textContent = resolution;
+    // Append radio button and label to the container
+    container.appendChild(radio);
+    container.appendChild(label);
+    // Add line break for layout
+    brTag = document.createElement('br');
+    results.push(container.appendChild(brTag));
+  }
+  return results;
+})();
+
+(function() {  // --------------------------------------
+  var i, len, osButton, osButtons, osChange, results;
+  // Run this code when user select an OS radio button
+  osChange = function(event) {
+    var selectedOS;
+    selectedOS = event.target.value;
+    return changeVideoFolder(selectedOS);
+  };
+  // Get all OS radio buttons
+  osButtons = document.querySelectorAll('input[name="os"]');
+// Event listener to each OS radio button
+  results = [];
+  for (i = 0, len = osButtons.length; i < len; i++) {
+    osButton = osButtons[i];
+    results.push(osButton.addEventListener('change', osChange));
+  }
+  return results;
+})();
+
+// ---------------------------------------------------------------------
+showAlert = function(title, icon, align, msg) {
+  return Swal.fire({
+    title: title,
+    html: `<div style='text-align: ${align}; font-size: 16px;'>${msg}</div>`,
+    icon: icon,
+    confirmButtonText: 'OK',
+    position: 'center',
+    animation: true
+  });
+};
+
+// --------------------------------------
+askConfirm = function(title, icon, message) {
+  return Swal.fire({
+    title: title,
+    html: message,
+    icon: icon,
+    showCancelButton: true,
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'No',
+    focusCancel: true,
+    position: 'center'
+  });
+};
+
+// --------------------------------------
+getOS = function() {
+  var platform;
+  platform = navigator.platform;
+  switch (false) {
+    case !(platform.indexOf('Win') > -1):
+      return 'windows';
+    case !(platform.indexOf('Mac') > -1):
+      return 'macos';
+    case !(platform.indexOf('Linux') > -1):
+      return 'linux';
+    default:
+      return 'unknown';
+  }
+};
+
+// --------------------------------------
+changeVideoFolder = function(os) {
+  var videoFolder;
+  videoFolder = document.getElementById('folder');
+  // Change 'Download Folder' field content
+  videoFolder.value = (function() {
+    switch (os) {
+      case 'linux':
+        return '$HOME/Videos';
+      case 'windows':
+        return '%USERPROFILE%\\Videos';
+      case 'macos':
+        return '$HOME/Movies';
+    }
+  })();
+  
+  // Also change radio button to corresponding OS
+  return document.querySelector(`input[name='os'][value='${os}']`).checked = true;
+};
+
+// --------------------------------------------------------------------
+
+// 'About' button click
+document.getElementById('about').onclick = function() {
+  var command, msg;
+  msg = `YDownloader 1.0<br><br>
+Using CoffeeScript 2.7<br><br>
+Copyright \u00A9 2025 - RonLinu`;
+  showAlert('', '', 'center', msg);
+  command = JSON.stringify({
+    id: identifier,
+    action: 'read',
+    cmd: ""
+  });
+  return socket.send(command);
+};
+
+// --------------------------------------------------------------------
+
+// 'How to' button click
+document.getElementById('help').onclick = function() {
+  return showAlert('Help', '', 'left', window.HELP);
+};
+
+// --------------------------------------------------------------------
+
+// 'Exit' button click
+document.getElementById('exit').onclick = async function() {
+  var command, result;
+  result = (await askConfirm('', 'question', 'This will terminate the application.<br><br>Are you sure?'));
+  if (result.isConfirmed) {
+    command = JSON.stringify({
+      id: identifier,
+      action: 'exit',
+      cmd: ""
+    });
+    socket.send(command);
+    return document.body.innerHTML = '';
+  }
+};
+
+// --------------------------------------
+
+// 'Generate yt-dlp command' button click
+document.getElementById('download').onclick = function() {
+  var abbreviations, checked, checkedLanguages, command, i, index, isValidUrl, len, match, option_merging, option_resolution, option_subtitles, resolution, selectedResolution, subtitles, url, videoFolder, ytdlp, ytdlp_cmd;
+  // Clear bottom screen from previously generated command (if any)
+  document.getElementById('footer').innerHTML = "";
+  // Local function to check URL validity
+  isValidUrl = function(string) {
+    var urlObj;
+    try {
+      urlObj = new URL(string);
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch (error) {
+      return false;
+    }
+  };
+  url = document.getElementById('videoUrl').value.trim();
+  if (!url) {
+    showAlert('', 'error', 'center', "The Video URL field is empty.");
+    return;
+  } else if (!isValidUrl(url)) {
+    showAlert('', 'error', 'center', "The Video URL is invalid.");
+    return;
+  }
+  // Remove any playlist, just download the main video
+  index = url.indexOf("?list");
+  if (index !== -1) {
+    url = url.slice(0, index);
+  }
+  option_resolution = '';
+  option_subtitles = '';
+  option_merging = '';
+  selectedResolution = document.querySelector('input[name="resolutions"]:checked').value;
+  if (selectedResolution === "No cap") {
+    option_resolution = "-f best ";
+  } else if (selectedResolution === "Audio only") {
+    option_resolution = "-x --audio-format mp3 ";
+  } else {
+    // Extract resolution number (first integer)
+    match = selectedResolution.match(/^[^\d]*(\d+)/);
+    resolution = match[1];
+    option_resolution = '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" ';
+  }
+  if (selectedResolution !== "Audio only") {
+    option_merging = '--merge-output-format mkv --remux-video mkv ';
+    // Extract abbreviations of selected subtitle languages into an array
+    checkedLanguages = document.querySelectorAll('input[name="language"]:checked');
+    abbreviations = [];
+    for (i = 0, len = checkedLanguages.length; i < len; i++) {
+      checked = checkedLanguages[i];
+      abbreviations.push(languages[checked.value]);
+    }
+    if (abbreviations.length) {
+      subtitles = abbreviations.join(",");
+      option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs ';
+    }
+  }
+  videoFolder = document.getElementById('folder').value.trim();
+  if (getOS() === "windows") {
+    ytdlp = 'yt-dlp.exe '; // yt-dlp has not PATH setup on Windows
+  } else {
+    ytdlp = 'yt-dlp ';
+  }
+  ytdlp_cmd = ytdlp + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + videoFolder + '" ' + option_resolution + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
+  // Push command to clipboard
+  //~ navigator.clipboard.writeText(ytdlp_cmd.trim())
+
+  // Show command at bottom screen
+  //~ document.getElementById('footer').innerHTML = "yt-dlp should start in a terminal window..."
+  command = JSON.stringify({
+    id: identifier,
+    action: 'execute',
+    cmd: ytdlp_cmd
+  });
+  return socket.send(command);
+};
