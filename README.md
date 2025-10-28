@@ -1,6 +1,8 @@
 
 Experimental web application to download videos on the user PC.
 
+This is a work in progress!
+
 Why: this web application uses a different solution than Electron or
   similar packages to run a JavaScript application that can:
   - give access to the operating system to execute system utilities.
