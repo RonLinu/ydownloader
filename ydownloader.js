@@ -259,7 +259,24 @@ changeVideoFolder = function(os) {
 };
 
 // --------------------------------------------------------------------
+// 'View folder' button click
+document.getElementById('viewfolder').onclick = function() {
+  var cmd, os;
+  os = getOS();
+  cmd = (function() {
+    switch (os) {
+      case 'linux':
+        return 'xdg-open "$HOME/Videos"';
+      case 'windows':
+        return 'explorer.exe "%USERPROFILE%\\Videos"';
+      case 'macos':
+        return 'open "$HOME/Movies"';
+    }
+  })();
+  return socket_send('run', cmd);
+};
 
+// --------------------------------------------------------------------
 // 'About' button click
 document.getElementById('about').onclick = function() {
   msg = `YDownloader 1.0<br><br>
@@ -271,14 +288,12 @@ Copyright \u00A9 2025 - RonLinu`;
 
 
 // --------------------------------------------------------------------
-
 // 'How to' button click
 document.getElementById('help').onclick = function() {
   return showAlert('Help', '', 'left', window.HELP);
 };
 
 // --------------------------------------------------------------------
-
 // 'Exit' button click
 document.getElementById('exit').onclick = async function() {
   var result;
@@ -290,7 +305,6 @@ document.getElementById('exit').onclick = async function() {
 };
 
 // --------------------------------------
-
 // 'Generate yt-dlp command' button click
 document.getElementById('download').onclick = function() {
   var abbreviations, checked, checkedLanguages, i, index, isValidUrl, len, match, option_merging, option_resolution, option_subtitles, resolution, selectedResolution, subtitles, url, videoFolder, ytdlp_cmd;

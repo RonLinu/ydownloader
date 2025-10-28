@@ -227,7 +227,17 @@ changeVideoFolder = (os) ->
     document.querySelector("input[name='os'][value='#{os}']").checked = true
 
 # --------------------------------------------------------------------
+# 'View folder' button click
+document.getElementById('viewfolder').onclick = ->
+    os = getOS()
+    cmd = switch os
+        when 'linux'   then 'xdg-open "$HOME/Videos"'
+        when 'windows' then 'explorer "%USERPROFILE%\\Videos"'
+        when 'macos'   then 'open "$HOME/Movies"'
 
+    socket_send( 'run', cmd )
+
+# --------------------------------------------------------------------
 # 'About' button click
 document.getElementById('about').onclick = ->
     msg = '''
@@ -240,13 +250,11 @@ document.getElementById('about').onclick = ->
     socket_send( 'read', '' )       # receive test only: get answer from socket.onmessage
 
 # --------------------------------------------------------------------
-
 # 'How to' button click
 document.getElementById('help').onclick = ->
     showAlert('Help', '', 'left', window.HELP)
 
 # --------------------------------------------------------------------
-
 # 'Exit' button click
 document.getElementById('exit').onclick = ->
     result = await askConfirm('', 'question',
@@ -257,7 +265,6 @@ document.getElementById('exit').onclick = ->
         document.body.innerHTML = ''
 
 # --------------------------------------
-
 # 'Generate yt-dlp command' button click
 document.getElementById('download').onclick = ->
 
