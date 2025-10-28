@@ -1,4 +1,8 @@
 
+if location.hash is ''
+    msg = 'This web application must be started with a web socket server.'
+    document.body.innerHTML = msg
+    
 # ********************** WEB SOCKET HANDLING **************************
 socket = null
 
@@ -10,14 +14,14 @@ do ->
         console.log 'WebSocket connection established'
         # Enable the Download button
         document.getElementById('download').disabled = false
-        
+
     socket.onerror = (event) ->
         console.log 'WebSocket error occurred'
         document.body.innerHTML = "WebSocket error on port #{port}"
 
     socket.onclose = (event) ->
         console.log 'WebSocket closed'
-        document.body.innerHTML = 'The web application has been closed.'
+        document.body.innerHTML = 'The application has been closed.'
 
     socket.onmessage = (event) ->
         console.log 'Message received:', event.data
@@ -47,7 +51,7 @@ window.onload = ->
         changeVideoFolder(os)
     else
         changeVideoFolder('windows')    # make a wild guess
-        
+
 # --------------------------------------
 languages =
     "Afrikaans"   : "af"
@@ -122,7 +126,7 @@ do ->
         checkbox.type = 'checkbox'
         checkbox.name = 'language'
         checkbox.value = language
-        
+
         if language in ["English"] then checkbox.checked = true
 
         # Append the checkbox into the label
@@ -177,7 +181,7 @@ do ->
     for osButton in osButtons
         osButton.addEventListener 'change', osChange
 
-# ---------------------------------------------------------------------
+# --------------------------------------
 showAlert = (title, icon, align, msg) ->
     Swal.fire
         title: title
@@ -186,7 +190,6 @@ showAlert = (title, icon, align, msg) ->
         confirmButtonText: 'OK'
         position: 'center'
         animation: true
-
 
 # --------------------------------------
 askConfirm = (title, icon, message) ->
@@ -219,7 +222,7 @@ changeVideoFolder = (os) ->
         when 'linux'   then '$HOME/Videos'
         when 'windows' then '%USERPROFILE%\\Videos'
         when 'macos'   then '$HOME/Movies'
-    
+
     # Also change radio button to corresponding OS
     document.querySelector("input[name='os'][value='#{os}']").checked = true
 
@@ -232,7 +235,7 @@ document.getElementById('about').onclick = ->
         Using CoffeeScript 2.7<br><br>
         Copyright \u00A9 2025 - RonLinu
         '''
-        
+
     showAlert('', '', 'center', msg)
     socket_send( 'read', '' )       # receive test only: get answer from socket.onmessage
 
@@ -294,7 +297,7 @@ document.getElementById('download').onclick = ->
         match = selectedResolution.match(/^[^\d]*(\d+)/)
         resolution = match[1]
         option_resolution = '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" '
-        
+
     if selectedResolution isnt "Audio only"
         option_merging = '--merge-output-format mkv --remux-video mkv '
 
@@ -303,7 +306,7 @@ document.getElementById('download').onclick = ->
         abbreviations = []
         abbreviations.push(languages[checked.value]) for checked in checkedLanguages
 
-        if abbreviations.length 
+        if abbreviations.length
             subtitles = abbreviations.join(",")
             option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs '
 
@@ -321,3 +324,4 @@ document.getElementById('download').onclick = ->
          '"' + url + '"'
 
     socket_send( 'execute', ytdlp_cmd )
+ 
