@@ -290,8 +290,6 @@ document.getElementById('exit').onclick = async function() {
 // 'Generate yt-dlp command' button click
 document.getElementById('download').onclick = function() {
   var abbreviations, checked, checkedLanguages, i, index, isValidUrl, len, match, option_merging, option_resolution, option_subtitles, resolution, selectedResolution, subtitles, url, videoFolder, ytdlp_cmd;
-  // Clear bottom screen from previously generated command (if any)
-  document.getElementById('footer').innerHTML = "";
   // Local function to check URL validity
   isValidUrl = function(string) {
     var urlObj;
