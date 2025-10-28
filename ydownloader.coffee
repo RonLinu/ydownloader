@@ -330,5 +330,11 @@ document.getElementById('download').onclick = ->
          '--buffer-size 16M ' +
          '"' + url + '"'
 
-    socket_send( 'execute', ytdlp_cmd )
+    os = getOS()
+    
+    final_cmd = switch os
+        when 'windows' then "cmd /c start \"\" cmd /k #{ytdlp_cmd}"
+        else "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash'"
+
+    socket_send( 'run', final_cmd )
  

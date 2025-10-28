@@ -268,7 +268,7 @@ document.getElementById('viewfolder').onclick = function() {
       case 'linux':
         return 'xdg-open "$HOME/Videos"';
       case 'windows':
-        return 'explorer.exe "%USERPROFILE%\\Videos"';
+        return 'explorer "%USERPROFILE%\\Videos"';
       case 'macos':
         return 'open "$HOME/Movies"';
     }
@@ -307,7 +307,7 @@ document.getElementById('exit').onclick = async function() {
 // --------------------------------------
 // 'Generate yt-dlp command' button click
 document.getElementById('download').onclick = function() {
-  var abbreviations, checked, checkedLanguages, i, index, isValidUrl, len, match, option_merging, option_resolution, option_subtitles, resolution, selectedResolution, subtitles, url, videoFolder, ytdlp_cmd;
+  var abbreviations, checked, checkedLanguages, final_cmd, i, index, isValidUrl, len, match, option_merging, option_resolution, option_subtitles, os, resolution, selectedResolution, subtitles, url, videoFolder, ytdlp_cmd;
   // Local function to check URL validity
   isValidUrl = function(string) {
     var urlObj;
@@ -361,5 +361,14 @@ document.getElementById('download').onclick = function() {
   }
   videoFolder = document.getElementById('folder').value.trim();
   ytdlp_cmd = 'yt-dlp ' + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + videoFolder + '" ' + option_resolution + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
-  return socket_send('execute', ytdlp_cmd);
+  os = getOS();
+  final_cmd = (function() {
+    switch (os) {
+      case 'windows':
+        return `cmd /c start \"\" cmd /k ${ytdlp_cmd}`;
+      default:
+        return `xterm -geometry 150x24 -e sh -c '${ytdlp_cmd}; echo; bash'`;
+    }
+  })();
+  return socket_send('run', final_cmd);
 };
