@@ -10,9 +10,9 @@ To do that, a simple and lightweight solution is to use a web socket server
 that acts as a bridge between the web page and the operating system.
 
 NOTE 1: ONLY the web socket server is needed on the user PC.
-  The total storage needed on the user PC is (beside Node.js):
-  ~ 3K for the web server
-  ~ 170K for the 'ws' webscoket library
+The total storage needed on the user PC is (beside Node.js):
+  - about 3K for the web server
+  - about 170K for the 'ws' webscoket library
 
    The web page itself is hosted on GitHub.
 
@@ -34,7 +34,7 @@ INSTALLATION OF THE WEB SOCKET SERVER:
   (Linux/MacOS only: insure xterm terminal is installed)
 
 To run:
-  Linux/MacOS: start with ydownloader.sh
-  Windows:     start with ydownloader.vbs
+ - Linux/MacOS: start with ydownloader.sh
+- Windows:     start with ydownloader.vbs
 
 The server will (should :) automatically open the web application using your default browser.
