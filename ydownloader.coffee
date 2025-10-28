@@ -192,6 +192,16 @@ showAlert = (title, icon, align, msg) ->
         animation: true
 
 # --------------------------------------
+timedAlert = (title, msg, time)->
+    Swal.fire
+      title: title,
+      icon: '',
+      html: msg
+      timer: time,              # time in milliseconds
+      timerProgressBar: true,   # show a progress bar
+      showConfirmButton: false
+
+# --------------------------------------
 askConfirm = (title, icon, message) ->
     Swal.fire
         title: title
@@ -228,14 +238,28 @@ changeVideoFolder = (os) ->
 
 # --------------------------------------------------------------------
 # 'View folder' button click
-document.getElementById('viewfolder').onclick = ->
-    os = getOS()
-    cmd = switch os
-        when 'linux'   then 'xdg-open "$HOME/Videos"'
-        when 'windows' then 'explorer "%USERPROFILE%\\Videos"'
-        when 'macos'   then 'open "$HOME/Movies"'
 
-    socket_send( 'run', cmd )
+setViewFolderClickHandler = ->
+    viewFolderWarning = true  # closure variable
+    ->
+        os = getOS()
+        cmd = switch os
+            when 'linux'
+                'xdg-open "$HOME/Videos"'
+            when 'windows'
+                'explorer "%USERPROFILE%\\Videos"'
+            when 'macos'
+                'open "$HOME/Movies"'
+        
+        if viewFolderWarning
+            viewFolderWarning = false
+            msg = 'The folder may appear in the taskbar<br>'
+            msg += 'or<br> behind this browser window.'
+            await showAlert('', '','center', msg)
+            
+        socket_send( 'run', cmd )
+
+document.getElementById('viewfolder').onclick = setViewFolderClickHandler()
 
 # --------------------------------------------------------------------
 # 'About' button click
@@ -275,7 +299,8 @@ document.getElementById('download').onclick = ->
             urlObj.protocol is 'http:' or urlObj.protocol is 'https:'
         catch
             false
-
+    # ------------------------------------
+    
     url = document.getElementById('videoUrl').value.trim()
 
     if not url
@@ -330,11 +355,10 @@ document.getElementById('download').onclick = ->
          '--buffer-size 16M ' +
          '"' + url + '"'
 
-    os = getOS()
-    
-    final_cmd = switch os
-        when 'windows' then "cmd /c start \"\" cmd /k #{ytdlp_cmd}"
-        else "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash'"
+    if getOS() is 'windows'
+        final_cmd = "cmd /c start \"\" cmd /k #{ytdlp_cmd}"
+    else
+        final_cmd = "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash'"
 
     socket_send( 'run', final_cmd )
  
