@@ -30,13 +30,13 @@ NOTE 2: the server MUST open the web page by itself to tell the JavaScript
 -------------------------------------
 INSTALLATION OF THE WEB SOCKET SERVER:
 
-- Node.js must be installed on your system, if not already
+- Node.js must be installed on your system, if not already installed
 - yt-dlp and ffmepg utilities must be installed and in your PATH
-- add the "websocket" directory provided here on your drive
+- download the "websocket" directory and put it on your drive
 - (Linux/MacOS only: insure xterm terminal is installed)
 
 To run:
- - Linux/MacOS: start with ydownloader.sh
+- Linux/MacOS: start with ydownloader.sh
 - Windows:     start with ydownloader.vbs
 
 The server will (should :) automatically open the web application using your default browser.
