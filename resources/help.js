@@ -4,8 +4,8 @@ To download a video, just paste its URL (copied from a browser address bar) and 
 The following utilities must be installed on your system and
 in your PATH to be able to download videos:
 <pre>
-- <i>yt-dlp</i> download utility
-- <i>ffmpeg</i> video conversion utility
-- <i>xterm</i>  terminal utility (Linux/MacOS only)
+- <b>yt-dlp</b> download utility
+- <b>ffmpeg</b> video conversion utility
+- <b>xterm</b>  terminal utility (Linux/MacOS only)
 </pre>
 `
