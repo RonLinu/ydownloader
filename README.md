@@ -12,7 +12,7 @@ that acts as a bridge between the web page and the operating system.
 NOTE 1: ONLY the web socket server is needed on the user PC.
 The total storage needed on the user PC is (beside Node.js):
   - about 3K for the web server
-  - about 170K for the 'ws' webscoket library
+  - about 170K for the 'ws' websocket library
 
    The web page itself is hosted on GitHub.
 
@@ -28,10 +28,10 @@ NOTE 2: the server MUST open the web page by itself to tell the JavaScript
 -------------------------------------
 INSTALLATION OF THE WEB SOCKET SERVER:
 
-  Node.js must installed on your system, if not already
-  yt-dlp and ffmepg utilities must be installed and in your PATH
-  add the "websocket" directory provided here on your drive
-  (Linux/MacOS only: insure xterm terminal is installed)
+- Node.js must be installed on your system, if not already
+- yt-dlp and ffmepg utilities must be installed and in your PATH
+- add the "websocket" directory provided here on your drive
+- (Linux/MacOS only: insure xterm terminal is installed)
 
 To run:
  - Linux/MacOS: start with ydownloader.sh
