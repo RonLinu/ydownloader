@@ -10,7 +10,7 @@ if (webpage === '' || socketport === '') {
   process.exit(0);
 }
 
-WebSocket = require('ws'); // "ws" module installed with: npm install ws
+WebSocket = require('ws'); // installed with: npm install ws
 
 ({exec} = require('child_process'));
 
@@ -60,6 +60,8 @@ wss.on('connection', function(ws) {
           return exec(`xterm -geometry 150x24 -e sh -c '${values.cmd}; echo; bash'`);
         }
         break;
+      case "run":
+        return exec(values.cmd);
       case "read":
         // Do some text file reading
         return ws.send("file content here");

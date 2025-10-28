@@ -48,6 +48,8 @@ wss.on 'connection', (ws) ->
                     exec "cmd /c start \"\" cmd /k #{values.cmd}"
                 else
                     exec "xterm -geometry 150x24 -e sh -c '#{values.cmd}; echo; bash'"
+            when "run"
+                exec values.cmd
             when "read"
                 # Do some text file reading
                 ws.send "file content here"
