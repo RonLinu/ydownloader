@@ -21,9 +21,7 @@ information to the JavaScript running the web app. This information is the web s
 session identifier that are passed in the fragment identifier appended to the web page URL.
 
   Opening the web page directly without the correct fragment identifier will issue an error message.  
-  A dummy fragment identifier will not work either becausethe fragment identifier is different each time  
-  the WebSocket server is started.
-
+  
 -------------------------------------
 INSTALLATION OF THE WEBSOCKET SERVER:
 
