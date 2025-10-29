@@ -24,7 +24,7 @@ do ->
         document.body.innerHTML = 'The application has been closed.'
 
     socket.onmessage = (event) ->
-        console.log 'Message received:', event.data
+        console.log "Message received: '#{event.data}'"
 
 # --------------------------------------
 socket_send = ( action, command ) ->
@@ -179,36 +179,36 @@ do ->
         osButton.addEventListener 'change', osChange
 
 # --------------------------------------
-showAlert = (title, icon, align, msg) ->
+showAlert = (title, icon, msg, textalign='center') ->
     Swal.fire
         title: title
-        html: "<div style='text-align: #{align}; font-size: 16px;'>#{msg}</div>"
+        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
         icon: icon
         confirmButtonText: 'OK'
         position: 'center'
         animation: true
 
 # --------------------------------------
-timedAlert = (msg, time)->
+timedAlert = (title, icon, msg, milliseconds)->
     Swal.fire
-      title: '',
-      icon: '',
+      title: title
+      icon: icon,
       html: msg
-      timer: time,              # time in milliseconds
-      timerProgressBar: true,   # show a progress bar
+      timer: milliseconds
+      timerProgressBar: true
       showConfirmButton: true
 
 # --------------------------------------
-askConfirm = (title, icon, message) ->
+askConfirm = (title, icon, msg) ->
     Swal.fire
         title: title
-        html: message
+        html: msg
         icon: icon
         showCancelButton: true
         confirmButtonText: 'Yes'
         cancelButtonText: 'No'
         focusCancel: true
-        position: 'center'
+        #~ position: 'center'
 
 # --------------------------------------
 getOS = ->
@@ -234,7 +234,7 @@ changeVideoFolder = (os) ->
     document.querySelector("input[name='os'][value='#{os}']").checked = true
 
 # --------------------------------------------------------------------
-# 'View folder' button click
+# 'Open folder' button click
 
 setViewFolderClickHandler = ->
     viewFolderWarning = true  # closure variable
@@ -249,29 +249,29 @@ setViewFolderClickHandler = ->
         
         if viewFolderWarning
             viewFolderWarning = false
-            msg = 'The folder may appear in the taskbar<br>'
-            msg += 'or<br> behind this browser window.'
-            await timedAlert(msg, 5000)
+            msg = 'The Video folder may open in the taskbar<br><br>'
+            msg += 'or behind this browser window.'
+            await timedAlert('Please note', '', msg, 5000)
             
         socket_send( 'run', cmd )
 
-document.getElementById('viewfolder').onclick = setViewFolderClickHandler()
+document.getElementById('openfolder').onclick = setViewFolderClickHandler()
 
 # --------------------------------------------------------------------
 # 'About' button click
 document.getElementById('about').onclick = ->
     msg = '''
-        YDownloader 1.0<br><br>
+        YDownloader 1.1<br><br>
         Using CoffeeScript 2.7<br><br>
         Copyright \u00A9 2025 - RonLinu
         '''
 
-    showAlert('', '', 'center', msg)
+    showAlert('', '', msg)
 
 # --------------------------------------------------------------------
 # 'Help' button click
 document.getElementById('help').onclick = ->
-    showAlert('Help', '', 'left', window.HELP)
+    showAlert('Help', '', window.HELP, 'left')
 
 # --------------------------------------------------------------------
 # 'Exit' button click
@@ -297,10 +297,10 @@ document.getElementById('download').onclick = ->
     url = document.getElementById('videoUrl').value.trim()
 
     if not url
-        showAlert('', 'error', 'center', 'The Video URL field is empty.')
+        showAlert('', 'error', 'The Video URL field is empty.')
         return
     else if not isValidUrl(url)
-        showAlert('', 'error', 'center', 'The Video URL is invalid.')
+        showAlert('', 'error', 'The Video URL is invalid.')
         return
 
     # Remove any playlist, just download the main video
@@ -349,9 +349,8 @@ document.getElementById('download').onclick = ->
          '"' + url + '"'
 
     if getOS() is 'windows'
-        final_cmd = """cmd /c start "" cmd /k #{ytdlp_cmd}"""
+        final_cmd = """cmd /c start "" cmd /k #{ytdlp_cmd} && del /q *.vtt"""
     else
-        final_cmd = "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash'"
-
+        final_cmd = "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; rm '#{videoFolder}/*.vtt'; echo; bash'"
+        
     socket_send( 'run', final_cmd )
- 

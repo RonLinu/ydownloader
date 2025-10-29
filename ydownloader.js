@@ -192,10 +192,10 @@ resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p 
 })();
 
 // --------------------------------------
-showAlert = function(title, icon, align, msg) {
+showAlert = function(title, icon, msg, textalign = 'center') {
   return Swal.fire({
     title: title,
-    html: `<div style='text-align: ${align}; font-size: 16px;'>${msg}</div>`,
+    html: `<div style='text-align: ${textalign}; font-size: 16px;'>${msg}</div>`,
     icon: icon,
     confirmButtonText: 'OK',
     position: 'center',
@@ -204,30 +204,31 @@ showAlert = function(title, icon, align, msg) {
 };
 
 // --------------------------------------
-timedAlert = function(msg, time) {
+timedAlert = function(title, icon, msg, milliseconds) {
   return Swal.fire({
-    title: '',
-    icon: '',
+    title: title,
+    icon: icon,
     html: msg,
-    timer: time, // time in milliseconds
-    timerProgressBar: true, // show a progress bar
+    timer: milliseconds,
+    timerProgressBar: true,
     showConfirmButton: true
   });
 };
 
 // --------------------------------------
-askConfirm = function(title, icon, message) {
+askConfirm = function(title, icon, msg) {
   return Swal.fire({
     title: title,
-    html: message,
+    html: msg,
     icon: icon,
     showCancelButton: true,
     confirmButtonText: 'Yes',
     cancelButtonText: 'No',
-    focusCancel: true,
-    position: 'center'
+    focusCancel: true
   });
 };
+
+//~ position: 'center'
 
 // --------------------------------------
 getOS = function() {
@@ -266,7 +267,7 @@ changeVideoFolder = function(os) {
 };
 
 // --------------------------------------------------------------------
-// 'View folder' button click
+// 'Open folder' button click
 setViewFolderClickHandler = function() {
   var viewFolderWarning;
   viewFolderWarning = true; // closure variable
@@ -284,29 +285,29 @@ setViewFolderClickHandler = function() {
     })();
     if (viewFolderWarning) {
       viewFolderWarning = false;
-      msg = 'The folder may appear in the taskbar<br>';
-      msg += 'or<br> behind this browser window.';
-      await timedAlert(msg, 5000);
+      msg = 'The Video folder may open in the taskbar<br><br>';
+      msg += 'or behind this browser window.';
+      await timedAlert('Please note', '', msg, 5000);
     }
     return socket_send('run', cmd);
   };
 };
 
-document.getElementById('viewfolder').onclick = setViewFolderClickHandler();
+document.getElementById('openfolder').onclick = setViewFolderClickHandler();
 
 // --------------------------------------------------------------------
 // 'About' button click
 document.getElementById('about').onclick = function() {
-  msg = `YDownloader 1.0<br><br>
+  msg = `YDownloader 1.1<br><br>
 Using CoffeeScript 2.7<br><br>
 Copyright \u00A9 2025 - RonLinu`;
-  return showAlert('', '', 'center', msg);
+  return showAlert('', '', msg);
 };
 
 // --------------------------------------------------------------------
 // 'Help' button click
 document.getElementById('help').onclick = function() {
-  return showAlert('Help', '', 'left', window.HELP);
+  return showAlert('Help', '', window.HELP, 'left');
 };
 
 // --------------------------------------------------------------------
@@ -336,10 +337,10 @@ document.getElementById('download').onclick = function() {
   // ------------------------------------
   url = document.getElementById('videoUrl').value.trim();
   if (!url) {
-    showAlert('', 'error', 'center', 'The Video URL field is empty.');
+    showAlert('', 'error', 'The Video URL field is empty.');
     return;
   } else if (!isValidUrl(url)) {
-    showAlert('', 'error', 'center', 'The Video URL is invalid.');
+    showAlert('', 'error', 'The Video URL is invalid.');
     return;
   }
   // Remove any playlist, just download the main video
@@ -378,9 +379,9 @@ document.getElementById('download').onclick = function() {
   videoFolder = document.getElementById('folder').value.trim();
   ytdlp_cmd = 'yt-dlp ' + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + videoFolder + '" ' + option_resolution + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
   if (getOS() === 'windows') {
-    final_cmd = `cmd /c start "" cmd /k ${ytdlp_cmd}`;
+    final_cmd = `cmd /c start "" cmd /k ${ytdlp_cmd} && del /q *.vtt`;
   } else {
-    final_cmd = `xterm -geometry 150x24 -e sh -c '${ytdlp_cmd}; echo; bash'`;
+    final_cmd = `xterm -geometry 150x24 -e sh -c '${ytdlp_cmd}; rm '${videoFolder}/*.vtt'; echo; bash'`;
   }
   return socket_send('run', final_cmd);
 };
