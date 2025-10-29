@@ -3,12 +3,12 @@ Experimental web application to download videos on the user PC.
 
 This is a work in progress!
 
-Goal: this web application uses a WebSocket server which much lighter, even though  
-less powerfull, than packages like Electron to run a JavaScript application that can:  
-  - give access to the operating system to execute system utilities.
-  - offer a graphical user interface using a standard HTML/CSS web page.
+Goal: this web application uses a WebSocket server that is much lighter, even though  
+less powerfull, than packagers like Electron to run a JavaScript application that can:  
+  - have access to the operating system to execute system utilities
+  - offer a graphical user interface using a standard HTML/CSS web page
 
-NOTE 1: ONLY the WebSocket server is needed on the user PC to run this web app.  
+NOTE 1: Only the WebSocket server is needed on the user PC to run this web application.  
 The total storage needed on the user PC is (beside Node.js):
   - about 3K for the web server
   - about 170K for the 'ws' websocket library
@@ -17,18 +17,18 @@ The total storage needed on the user PC is (beside Node.js):
 
 NOTE 2: it is the WebSocket server itself that opens the web page by launching the default browser  
 of the operating system. It is a convenient and automated process that is necessary to pass  
-information to the JavaScript running the web app. This information is the web socket port and a security  
-session identifier that are passed in the fragment identifier appended to the web page URL.
+information to the JavaScript running the web app. This information is the web socket port number and  
+a security session identifier, both are passed in the fragment identifier appended to the web page URL.
 
-  Opening the web page directly without the correct fragment identifier will issue an error message.  
+Opening the web page directly without the correct fragment identifier will issue an error message.  
   
 -------------------------------------
 INSTALLATION OF THE WEBSOCKET SERVER:
 
-- Node.js must be installed on your system, if not already installed
+- Node.js must be installed on your system (if not already installed)
 - yt-dlp and ffmepg utilities must be installed and in your PATH
 - download the "websocket" directory and put it on your drive
-- (Linux/MacOS only: insure xterm terminal is installed)
+- Linux/MacOS only: be sure xterm terminal is installed
 
 To run:
 - Linux/MacOS: start with ydownloader.sh
