@@ -2,7 +2,16 @@
 if location.hash is ''
     msg = 'This web application must be started with a web socket server.'
     document.body.innerHTML = msg
-    
+
+showAlert = (title, icon, msg, textalign='center') ->
+    Swal.fire
+        title: title
+        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
+        icon: icon
+        confirmButtonText: 'OK'
+        position: 'center'
+        animation: true
+
 # ********************** WEB SOCKET HANDLING **************************
 socket = null
 
@@ -24,21 +33,27 @@ do ->
         document.body.innerHTML = 'The application has been closed.'
 
     socket.onmessage = (event) ->
-        console.log "Message received: '#{event.data}'"
-
+        if event.data.indexOf('Error') > -1
+            socket_error event.data
+            
 # --------------------------------------
-socket_send = ( action, command ) ->
+socket_send = ( action, command, tag ) ->
     cmd = JSON.stringify
         id: location.hash       # use full fragment as identifier
         action: action
         cmd: command
+        tag: tag
     socket.send cmd
 
+# --------------------------------------
+socket_error = (error) ->
+    showAlert('', 'error', error)
+        
 # ******************* END OF WEB SOCKET HANDLING **********************
 
 window.addEventListener 'beforeunload', (event) ->
     # Terminate the external socket server program
-    socket_send( 'exit', '' )
+    socket_send( 'exit', '', 'EXIT' )
 
 # --------------------------------------
 window.onload = ->
@@ -179,24 +194,14 @@ do ->
         osButton.addEventListener 'change', osChange
 
 # --------------------------------------
-showAlert = (title, icon, msg, textalign='center') ->
-    Swal.fire
-        title: title
-        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
-        icon: icon
-        confirmButtonText: 'OK'
-        position: 'center'
-        animation: true
-
-# --------------------------------------
 timedAlert = (title, icon, msg, milliseconds)->
     Swal.fire
-      title: title
-      icon: icon,
-      html: msg
-      timer: milliseconds
-      timerProgressBar: true
-      showConfirmButton: true
+        title: title
+        icon: icon,
+        html: msg
+        timer: milliseconds
+        timerProgressBar: true
+        showConfirmButton: true
 
 # --------------------------------------
 askConfirm = (title, icon, msg) ->
@@ -208,7 +213,6 @@ askConfirm = (title, icon, msg) ->
         confirmButtonText: 'Yes'
         cancelButtonText: 'No'
         focusCancel: true
-        #~ position: 'center'
 
 # --------------------------------------
 getOS = ->
@@ -236,26 +240,28 @@ changeVideoFolder = (os) ->
 # --------------------------------------------------------------------
 # 'Open folder' button click
 
-setViewFolderClickHandler = ->
-    viewFolderWarning = true  # closure variable
+setOpenFolderClickHandler = ->
+    openFolderWarning = true  # closure variable
     ->
+        videoFolder = document.getElementById('folder').value
+        
         cmd = switch getOS()
             when 'linux'
-                'xdg-open "$HOME/Videos"'
+                """xdg-open "#{videoFolder}" """
             when 'macos'
-                'open "$HOME/Movies"'
+                """open "#{videoFolder}" """
             when 'windows'
-                'explorer "%USERPROFILE%\\Videos"'
+                """explorer "#{videoFolder}" """
         
-        if viewFolderWarning
-            viewFolderWarning = false
+        if openFolderWarning
+            openFolderWarning = false
             msg = 'The Video folder may open in the taskbar<br><br>'
             msg += 'or behind this browser window.'
             await timedAlert('Please note', '', msg, 5000)
             
-        socket_send( 'run', cmd )
+        socket_send( 'run', cmd, 'OPEN FOLDER')
 
-document.getElementById('openfolder').onclick = setViewFolderClickHandler()
+document.getElementById('openfolder').onclick = setOpenFolderClickHandler()
 
 # --------------------------------------------------------------------
 # 'About' button click
@@ -279,7 +285,7 @@ document.getElementById('exit').onclick = ->
     result = await askConfirm('', 'question',
         'This will terminate the application.<br><br>Are you sure?')
 
-    if result.isConfirmed then socket_send( 'exit', '' )
+    if result.isConfirmed then socket_send( 'exit', '', 'EXIT' )
 
 # --------------------------------------
 # 'Generate yt-dlp command' button click
@@ -353,4 +359,4 @@ document.getElementById('download').onclick = ->
     else
         final_cmd = "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; rm '#{videoFolder}/*.vtt'; echo; bash'"
         
-    socket_send( 'run', final_cmd )
+    socket_send( 'run', final_cmd, 'YT-DLP' )
