@@ -53,18 +53,15 @@ wss.on('connection', function(ws) {
         console.log('Client disconnected');
         ws.close();
         return process.exit(0);
-      case "execute":
-        if (process.platform === 'win32') {
-          return exec(`cmd /c start \"\" cmd /k ${values.cmd}`);
-        } else {
-          return exec(`xterm -geometry 150x24 -e sh -c '${values.cmd}; echo; bash'`);
-        }
-        break;
       case "run":
-        return exec(values.cmd);
-      case "read":
-        // Do some text file reading
-        return ws.send("file content here");
+        return exec(values.cmd, function(error, stdout, stderr) {
+          if (error) {
+            console.error(`Error: ${error}`);
+            return console.error(`stderr: ${stderr}`);
+          } else {
+            return ws.send(`stdout: ${stdout}`);
+          }
+        });
     }
   });
 });

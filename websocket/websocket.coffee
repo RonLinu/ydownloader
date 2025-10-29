@@ -43,16 +43,13 @@ wss.on 'connection', (ws) ->
                 console.log 'Client disconnected'
                 ws.close()
                 process.exit 0
-            when "execute"
-                if process.platform is 'win32'
-                    exec "cmd /c start \"\" cmd /k #{values.cmd}"
-                else
-                    exec "xterm -geometry 150x24 -e sh -c '#{values.cmd}; echo; bash'"
             when "run"
-                exec values.cmd
-            when "read"
-                # Do some text file reading
-                ws.send "file content here"
+                exec values.cmd, (error, stdout, stderr) ->
+                  if error
+                    console.error "Error: #{error}"
+                    console.error "stderr: #{stderr}"
+                  else
+                    ws.send "stdout: #{stdout}"
 
 # ---------------------------------------------------------------------
 console.log "WebSocket server running on port: #{socketport}"
