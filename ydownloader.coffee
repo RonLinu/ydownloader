@@ -46,65 +46,62 @@ window.onload = ->
     document.getElementById('videoUrl').focus()
 
     # Preset the video folder by detecting underlying OS
-    os = getOS()
-    if os isnt "unknown"
-        changeVideoFolder(os)
-    else
-        changeVideoFolder('windows')    # make a wild guess
+    #~ os = getOS()
+    changeVideoFolder( getOS() )
 
 # --------------------------------------
 languages =
-    "Afrikaans"   : "af"
-    "Amharic"     : "am"
-    "Arabic"      : "ar"
-    "Basque"      : "eu"
-    "Bengali"     : "bn"
-    "Bulgarian"   : "bg"
-    "Catalan"     : "ca"
-    "Chinese"     : "zh"
-    "Croatian"    : "hr"
-    "Czech"       : "cs"
-    "Danish"      : "da"
-    "Dutch"       : "nl"
-    "English"     : "en"
-    "Esperanto"   : "eo"
-    "Estonian"    : "et"
-    "Filipino"    : "fil"
-    "Finnish"     : "fi"
-    "French"      : "fr"
-    "Galician"    : "gl"
-    "German"      : "de"
-    "Greek"       : "el"
-    "Hebrew"      : "he"
-    "Hindi"       : "hi"
-    "Hungarian"   : "hu"
-    "Icelandic"   : "is"
-    "Indonesian"  : "id"
-    "Irish"       : "ga"
-    "Italian"     : "it"
-    "Japanese"    : "ja"
-    "Korean"      : "ko"
-    "Latvian"     : "lv"
-    "Lithuanian"  : "lt"
-    "Malay"       : "ms"
-    "Norwegian"   : "no"
-    "Romanian"    : "ro"
-    "Russian"     : "ru"
-    "Serbian"     : "sr"
-    "Slovak"      : "sk"
-    "Slovenian"   : "sl"
-    "Spanish"     : "es"
-    "Swahili"     : "sw"
-    "Swedish"     : "sv"
-    "Tamil"       : "ta"
-    "Telugu"      : "te"
-    "Thai"        : "th"
-    "Turkish"     : "tr"
-    "Ukrainian"   : "uk"
-    "Vietnamese"  : "vi"
-    "Welsh"       : "cy"
-    "Xhosa"       : "xh"
-    "Zulu"        : "zu"
+    'Afrikaans'   : 'af'
+    'Amharic'     : 'am'
+    'Arabic'      : 'ar'
+    'Basque'      : 'eu'
+    'Bengali'     : 'bn'
+    'Bulgarian'   : 'bg'
+    'Catalan'     : 'ca'
+    'Chinese'     : 'zh'
+    'Croatian'    : 'hr'
+    'Czech'       : 'cs'
+    'Danish'      : 'da'
+    'Dutch'       : 'nl'
+    'English'     : 'en'
+    'Esperanto'   : 'eo'
+    'Estonian'    : 'et'
+    'Filipino'    : 'fil'
+    'Finnish'     : 'fi'
+    'French'      : 'fr'
+    'Galician'    : 'gl'
+    'German'      : 'de'
+    'Greek'       : 'el'
+    'Hebrew'      : 'he'
+    'Hindi'       : 'hi'
+    'Hungarian'   : 'hu'
+    'Icelandic'   : 'is'
+    'Indonesian'  : 'id'
+    'Irish'       : 'ga'
+    'Italian'     : 'it'
+    'Japanese'    : 'ja'
+    'Korean'      : 'ko'
+    'Latvian'     : 'lv'
+    'Lithuanian'  : 'lt'
+    'Malay'       : 'ms'
+    'Norwegian'   : 'no'
+    'Romanian'    : 'ro'
+    'Russian'     : 'ru'
+    'Serbian'     : 'sr'
+    'Slovak'      : 'sk'
+    'Slovenian'   : 'sl'
+    'Spanish'     : 'es'
+    'Swahili'     : 'sw'
+    'Swedish'     : 'sv'
+    'Tamil'       : 'ta'
+    'Telugu'      : 'te'
+    'Thai'        : 'th'
+    'Turkish'     : 'tr'
+    'Ukrainian'   : 'uk'
+    'Vietnamese'  : 'vi'
+    'Welsh'       : 'cy'
+    'Xhosa'       : 'xh'
+    'Zulu'        : 'zu'
 
 resolutions = [
     '360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)',
@@ -127,7 +124,7 @@ do ->
         checkbox.name = 'language'
         checkbox.value = language
 
-        if language in ["English"] then checkbox.checked = true
+        if language in ['English'] then checkbox.checked = true
 
         # Append the checkbox into the label
         label.appendChild(checkbox)
@@ -152,7 +149,7 @@ do ->
         radio.name  = 'resolutions' # group name
         radio.value = resolution
 
-        if resolution is "720p (HD)" then radio.checked = true
+        if resolution is '720p (HD)' then radio.checked = true
 
         # Create label element for the radio button
         label = document.createElement('label')
@@ -169,7 +166,7 @@ do ->
 
 # --------------------------------------
 do ->
-    # Run this event listener code when user select an OS radio button
+    # Run this event listener when user select an OS radio button
     osChange = (event) ->
         selectedOS = event.target.value
         changeVideoFolder selectedOS
@@ -192,14 +189,14 @@ showAlert = (title, icon, align, msg) ->
         animation: true
 
 # --------------------------------------
-timedAlert = (title, msg, time)->
+timedAlert = (msg, time)->
     Swal.fire
-      title: title,
+      title: '',
       icon: '',
       html: msg
       timer: time,              # time in milliseconds
       timerProgressBar: true,   # show a progress bar
-      showConfirmButton: false
+      showConfirmButton: true
 
 # --------------------------------------
 askConfirm = (title, icon, message) ->
@@ -218,9 +215,9 @@ getOS = ->
     platform = navigator.platform
 
     switch
-        when platform.indexOf('Win') > -1   then 'windows'
-        when platform.indexOf('Mac') > -1   then 'macos'
         when platform.indexOf('Linux') > -1 then 'linux'
+        when platform.indexOf('Mac')   > -1 then 'macos'
+        when platform.indexOf('Win')   > -1 then 'windows'
         else 'unknown'
 
 # --------------------------------------
@@ -229,10 +226,10 @@ changeVideoFolder = (os) ->
 
     # Change 'Download Folder' field content
     videoFolder.value = switch os
-        when 'linux'   then '$HOME/Videos'
-        when 'windows' then '%USERPROFILE%\\Videos'
-        when 'macos'   then '$HOME/Movies'
-
+        when 'linux' then '$HOME/Videos'
+        when 'macos' then '$HOME/Movies'
+        else '%USERPROFILE%\\Videos'
+        
     # Also change radio button to corresponding OS
     document.querySelector("input[name='os'][value='#{os}']").checked = true
 
@@ -242,20 +239,19 @@ changeVideoFolder = (os) ->
 setViewFolderClickHandler = ->
     viewFolderWarning = true  # closure variable
     ->
-        os = getOS()
-        cmd = switch os
+        cmd = switch getOS()
             when 'linux'
                 'xdg-open "$HOME/Videos"'
-            when 'windows'
-                'explorer "%USERPROFILE%\\Videos"'
             when 'macos'
                 'open "$HOME/Movies"'
+            when 'windows'
+                'explorer "%USERPROFILE%\\Videos"'
         
         if viewFolderWarning
             viewFolderWarning = false
             msg = 'The folder may appear in the taskbar<br>'
             msg += 'or<br> behind this browser window.'
-            await showAlert('', '','center', msg)
+            await timedAlert(msg, 5000)
             
         socket_send( 'run', cmd )
 
@@ -271,10 +267,9 @@ document.getElementById('about').onclick = ->
         '''
 
     showAlert('', '', 'center', msg)
-    socket_send( 'read', '' )       # receive test only: get answer from socket.onmessage
 
 # --------------------------------------------------------------------
-# 'How to' button click
+# 'Help' button click
 document.getElementById('help').onclick = ->
     showAlert('Help', '', 'left', window.HELP)
 
@@ -284,9 +279,7 @@ document.getElementById('exit').onclick = ->
     result = await askConfirm('', 'question',
         'This will terminate the application.<br><br>Are you sure?')
 
-    if result.isConfirmed
-        socket_send( 'exit', '' )
-        document.body.innerHTML = ''
+    if result.isConfirmed then socket_send( 'exit', '' )
 
 # --------------------------------------
 # 'Generate yt-dlp command' button click
@@ -304,10 +297,10 @@ document.getElementById('download').onclick = ->
     url = document.getElementById('videoUrl').value.trim()
 
     if not url
-        showAlert('', 'error', 'center', "The Video URL field is empty.")
+        showAlert('', 'error', 'center', 'The Video URL field is empty.')
         return
     else if not isValidUrl(url)
-        showAlert('', 'error', 'center', "The Video URL is invalid.")
+        showAlert('', 'error', 'center', 'The Video URL is invalid.')
         return
 
     # Remove any playlist, just download the main video
@@ -320,17 +313,17 @@ document.getElementById('download').onclick = ->
 
     selectedResolution = document.querySelector('input[name="resolutions"]:checked').value
 
-    if selectedResolution is "No cap"
-        option_resolution = "-f best "
-    else if selectedResolution is "Audio only"
-        option_resolution = "-x --audio-format mp3 "
+    if selectedResolution is 'No cap'
+        option_resolution = '-f best '
+    else if selectedResolution is 'Audio only'
+        option_resolution = '-x --audio-format mp3 '
     else
         # Extract resolution number (first integer)
         match = selectedResolution.match(/^[^\d]*(\d+)/)
         resolution = match[1]
         option_resolution = '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" '
 
-    if selectedResolution isnt "Audio only"
+    if selectedResolution isnt 'Audio only'
         option_merging = '--merge-output-format mkv --remux-video mkv '
 
         # Extract abbreviations of selected subtitle languages into an array
@@ -356,7 +349,7 @@ document.getElementById('download').onclick = ->
          '"' + url + '"'
 
     if getOS() is 'windows'
-        final_cmd = "cmd /c start \"\" cmd /k #{ytdlp_cmd}"
+        final_cmd = """cmd /c start "" cmd /k #{ytdlp_cmd}"""
     else
         final_cmd = "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash'"
 

@@ -51,72 +51,66 @@ window.addEventListener('beforeunload', function(event) {
 
 // --------------------------------------
 window.onload = function() {
-  var os;
   // Conveniently focus on video URL field
   document.getElementById('videoUrl').focus();
   // Preset the video folder by detecting underlying OS
-  os = getOS();
-  if (os !== "unknown") {
-    return changeVideoFolder(os);
-  } else {
-    return changeVideoFolder('windows'); // make a wild guess
-  }
+  //~ os = getOS()
+  return changeVideoFolder(getOS());
 };
-
 
 // --------------------------------------
 languages = {
-  "Afrikaans": "af",
-  "Amharic": "am",
-  "Arabic": "ar",
-  "Basque": "eu",
-  "Bengali": "bn",
-  "Bulgarian": "bg",
-  "Catalan": "ca",
-  "Chinese": "zh",
-  "Croatian": "hr",
-  "Czech": "cs",
-  "Danish": "da",
-  "Dutch": "nl",
-  "English": "en",
-  "Esperanto": "eo",
-  "Estonian": "et",
-  "Filipino": "fil",
-  "Finnish": "fi",
-  "French": "fr",
-  "Galician": "gl",
-  "German": "de",
-  "Greek": "el",
-  "Hebrew": "he",
-  "Hindi": "hi",
-  "Hungarian": "hu",
-  "Icelandic": "is",
-  "Indonesian": "id",
-  "Irish": "ga",
-  "Italian": "it",
-  "Japanese": "ja",
-  "Korean": "ko",
-  "Latvian": "lv",
-  "Lithuanian": "lt",
-  "Malay": "ms",
-  "Norwegian": "no",
-  "Romanian": "ro",
-  "Russian": "ru",
-  "Serbian": "sr",
-  "Slovak": "sk",
-  "Slovenian": "sl",
-  "Spanish": "es",
-  "Swahili": "sw",
-  "Swedish": "sv",
-  "Tamil": "ta",
-  "Telugu": "te",
-  "Thai": "th",
-  "Turkish": "tr",
-  "Ukrainian": "uk",
-  "Vietnamese": "vi",
-  "Welsh": "cy",
-  "Xhosa": "xh",
-  "Zulu": "zu"
+  'Afrikaans': 'af',
+  'Amharic': 'am',
+  'Arabic': 'ar',
+  'Basque': 'eu',
+  'Bengali': 'bn',
+  'Bulgarian': 'bg',
+  'Catalan': 'ca',
+  'Chinese': 'zh',
+  'Croatian': 'hr',
+  'Czech': 'cs',
+  'Danish': 'da',
+  'Dutch': 'nl',
+  'English': 'en',
+  'Esperanto': 'eo',
+  'Estonian': 'et',
+  'Filipino': 'fil',
+  'Finnish': 'fi',
+  'French': 'fr',
+  'Galician': 'gl',
+  'German': 'de',
+  'Greek': 'el',
+  'Hebrew': 'he',
+  'Hindi': 'hi',
+  'Hungarian': 'hu',
+  'Icelandic': 'is',
+  'Indonesian': 'id',
+  'Irish': 'ga',
+  'Italian': 'it',
+  'Japanese': 'ja',
+  'Korean': 'ko',
+  'Latvian': 'lv',
+  'Lithuanian': 'lt',
+  'Malay': 'ms',
+  'Norwegian': 'no',
+  'Romanian': 'ro',
+  'Russian': 'ru',
+  'Serbian': 'sr',
+  'Slovak': 'sk',
+  'Slovenian': 'sl',
+  'Spanish': 'es',
+  'Swahili': 'sw',
+  'Swedish': 'sv',
+  'Tamil': 'ta',
+  'Telugu': 'te',
+  'Thai': 'th',
+  'Turkish': 'tr',
+  'Ukrainian': 'uk',
+  'Vietnamese': 'vi',
+  'Welsh': 'cy',
+  'Xhosa': 'xh',
+  'Zulu': 'zu'
 };
 
 resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'];
@@ -134,7 +128,7 @@ resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p 
     checkbox.type = 'checkbox';
     checkbox.name = 'language';
     checkbox.value = language;
-    if (language === "English") {
+    if (language === 'English') {
       checkbox.checked = true;
     }
     // Append the checkbox into the label
@@ -161,7 +155,7 @@ resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p 
     radio.id = index; // unique id
     radio.name = 'resolutions'; // group name
     radio.value = resolution;
-    if (resolution === "720p (HD)") {
+    if (resolution === '720p (HD)') {
       radio.checked = true;
     }
     // Create label element for the radio button
@@ -180,7 +174,7 @@ resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p 
 
 (function() {  // --------------------------------------
   var i, len, osButton, osButtons, osChange, results;
-  // Run this event listener code when user select an OS radio button
+  // Run this event listener when user select an OS radio button
   osChange = function(event) {
     var selectedOS;
     selectedOS = event.target.value;
@@ -210,14 +204,14 @@ showAlert = function(title, icon, align, msg) {
 };
 
 // --------------------------------------
-timedAlert = function(title, msg, time) {
+timedAlert = function(msg, time) {
   return Swal.fire({
-    title: title,
+    title: '',
     icon: '',
     html: msg,
     timer: time, // time in milliseconds
     timerProgressBar: true, // show a progress bar
-    showConfirmButton: false
+    showConfirmButton: true
   });
 };
 
@@ -240,12 +234,12 @@ getOS = function() {
   var platform;
   platform = navigator.platform;
   switch (false) {
-    case !(platform.indexOf('Win') > -1):
-      return 'windows';
-    case !(platform.indexOf('Mac') > -1):
-      return 'macos';
     case !(platform.indexOf('Linux') > -1):
       return 'linux';
+    case !(platform.indexOf('Mac') > -1):
+      return 'macos';
+    case !(platform.indexOf('Win') > -1):
+      return 'windows';
     default:
       return 'unknown';
   }
@@ -260,12 +254,13 @@ changeVideoFolder = function(os) {
     switch (os) {
       case 'linux':
         return '$HOME/Videos';
-      case 'windows':
-        return '%USERPROFILE%\\Videos';
       case 'macos':
         return '$HOME/Movies';
+      default:
+        return '%USERPROFILE%\\Videos';
     }
   })();
+  
   // Also change radio button to corresponding OS
   return document.querySelector(`input[name='os'][value='${os}']`).checked = true;
 };
@@ -276,23 +271,22 @@ setViewFolderClickHandler = function() {
   var viewFolderWarning;
   viewFolderWarning = true; // closure variable
   return async function() {
-    var cmd, os;
-    os = getOS();
+    var cmd;
     cmd = (function() {
-      switch (os) {
+      switch (getOS()) {
         case 'linux':
           return 'xdg-open "$HOME/Videos"';
-        case 'windows':
-          return 'explorer "%USERPROFILE%\\Videos"';
         case 'macos':
           return 'open "$HOME/Movies"';
+        case 'windows':
+          return 'explorer "%USERPROFILE%\\Videos"';
       }
     })();
     if (viewFolderWarning) {
       viewFolderWarning = false;
       msg = 'The folder may appear in the taskbar<br>';
       msg += 'or<br> behind this browser window.';
-      await showAlert('', '', 'center', msg);
+      await timedAlert(msg, 5000);
     }
     return socket_send('run', cmd);
   };
@@ -306,13 +300,11 @@ document.getElementById('about').onclick = function() {
   msg = `YDownloader 1.0<br><br>
 Using CoffeeScript 2.7<br><br>
 Copyright \u00A9 2025 - RonLinu`;
-  showAlert('', '', 'center', msg);
-  return socket_send('read', ''); // receive test only: get answer from socket.onmessage
+  return showAlert('', '', 'center', msg);
 };
 
-
 // --------------------------------------------------------------------
-// 'How to' button click
+// 'Help' button click
 document.getElementById('help').onclick = function() {
   return showAlert('Help', '', 'left', window.HELP);
 };
@@ -323,8 +315,7 @@ document.getElementById('exit').onclick = async function() {
   var result;
   result = (await askConfirm('', 'question', 'This will terminate the application.<br><br>Are you sure?'));
   if (result.isConfirmed) {
-    socket_send('exit', '');
-    return document.body.innerHTML = '';
+    return socket_send('exit', '');
   }
 };
 
@@ -342,12 +333,13 @@ document.getElementById('download').onclick = function() {
       return false;
     }
   };
+  // ------------------------------------
   url = document.getElementById('videoUrl').value.trim();
   if (!url) {
-    showAlert('', 'error', 'center', "The Video URL field is empty.");
+    showAlert('', 'error', 'center', 'The Video URL field is empty.');
     return;
   } else if (!isValidUrl(url)) {
-    showAlert('', 'error', 'center', "The Video URL is invalid.");
+    showAlert('', 'error', 'center', 'The Video URL is invalid.');
     return;
   }
   // Remove any playlist, just download the main video
@@ -359,17 +351,17 @@ document.getElementById('download').onclick = function() {
   option_subtitles = '';
   option_merging = '';
   selectedResolution = document.querySelector('input[name="resolutions"]:checked').value;
-  if (selectedResolution === "No cap") {
-    option_resolution = "-f best ";
-  } else if (selectedResolution === "Audio only") {
-    option_resolution = "-x --audio-format mp3 ";
+  if (selectedResolution === 'No cap') {
+    option_resolution = '-f best ';
+  } else if (selectedResolution === 'Audio only') {
+    option_resolution = '-x --audio-format mp3 ';
   } else {
     // Extract resolution number (first integer)
     match = selectedResolution.match(/^[^\d]*(\d+)/);
     resolution = match[1];
     option_resolution = '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" ';
   }
-  if (selectedResolution !== "Audio only") {
+  if (selectedResolution !== 'Audio only') {
     option_merging = '--merge-output-format mkv --remux-video mkv ';
     // Extract abbreviations of selected subtitle languages into an array
     checkedLanguages = document.querySelectorAll('input[name="language"]:checked');
@@ -386,7 +378,7 @@ document.getElementById('download').onclick = function() {
   videoFolder = document.getElementById('folder').value.trim();
   ytdlp_cmd = 'yt-dlp ' + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + videoFolder + '" ' + option_resolution + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
   if (getOS() === 'windows') {
-    final_cmd = `cmd /c start \"\" cmd /k ${ytdlp_cmd}`;
+    final_cmd = `cmd /c start "" cmd /k ${ytdlp_cmd}`;
   } else {
     final_cmd = `xterm -geometry 150x24 -e sh -c '${ytdlp_cmd}; echo; bash'`;
   }
