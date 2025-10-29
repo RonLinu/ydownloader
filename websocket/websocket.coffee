@@ -44,12 +44,9 @@ wss.on 'connection', (ws) ->
                 ws.close()
                 process.exit 0
             when "run"
+                console.log "Server received: #{values.cmd}"
                 exec values.cmd, (error, stdout, stderr) ->
-                  if error
-                    console.error "Error: #{error}"
-                    console.error "stderr: #{stderr}"
-                  else
-                    ws.send "stdout: #{stdout}"
+                    if error then ws.send "#{error}"
 
 # ---------------------------------------------------------------------
 console.log "WebSocket server running on port: #{socketport}"
@@ -61,7 +58,7 @@ randomHex = ->
     .padStart(8, '0')                     # ensure 8 characters
     
 # ----------------------------
-openUrl = (url) ->
+openBrowser = (url) ->
     switch process.platform
         when 'darwin'
             exec "open '#{url}'"      # macOS
@@ -75,4 +72,5 @@ openUrl = (url) ->
 identifier = "##{randomHex()},#{socketport}"
 
 console.log "Opening webpage with default browser: #{webpage}"
-openUrl webpage + identifier
+
+openBrowser webpage + identifier
