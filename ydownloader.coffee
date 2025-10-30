@@ -1,18 +1,12 @@
 
+openVideoFolderFlag = true
+
 if location.hash is ''
-    msg = 'This web application must be started with a web socket server.'
+    msg = 'This web application must be started with the WebSocket server.'
     document.body.innerHTML = msg
+    throw new Error "Stop execution"
 
-showAlert = (title, icon, msg, textalign='center') ->
-    Swal.fire
-        title: title
-        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
-        icon: icon
-        confirmButtonText: 'OK'
-        position: 'center'
-        animation: true
-
-# ********************** WEB SOCKET HANDLING **************************
+# ********************** WEBSOCKET HANDLING ***************************
 socket = null
 
 do ->
@@ -34,7 +28,7 @@ do ->
 
     socket.onmessage = (event) ->
         if event.data.indexOf('Error') > -1
-            socket_error event.data
+            showAlert('', 'error', event.data)
             
 # --------------------------------------
 socket_send = ( action, command, tag ) ->
@@ -45,11 +39,7 @@ socket_send = ( action, command, tag ) ->
         tag: tag
     socket.send cmd
 
-# --------------------------------------
-socket_error = (error) ->
-    showAlert('', 'error', error)
-        
-# ******************* END OF WEB SOCKET HANDLING **********************
+# ******************* END OF WEBSOCKET HANDLING ***********************
 
 window.addEventListener 'beforeunload', (event) ->
     # Terminate the external socket server program
@@ -61,7 +51,6 @@ window.onload = ->
     document.getElementById('videoUrl').focus()
 
     # Preset the video folder by detecting underlying OS
-    #~ os = getOS()
     changeVideoFolder( getOS() )
 
 # --------------------------------------
@@ -194,6 +183,14 @@ do ->
         osButton.addEventListener 'change', osChange
 
 # --------------------------------------
+showAlert = (title, icon, msg, textalign='center') ->
+    Swal.fire
+        title: title
+        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
+        icon: icon
+        confirmButtonText: 'OK'
+
+# --------------------------------------
 timedAlert = (title, icon, msg, milliseconds)->
     Swal.fire
         title: title
@@ -239,35 +236,30 @@ changeVideoFolder = (os) ->
 
 # --------------------------------------------------------------------
 # 'Open folder' button click
-
-setOpenFolderClickHandler = ->
-    openFolderWarning = true  # closure variable
-    ->
-        videoFolder = document.getElementById('folder').value
+document.getElementById('openfolder').onclick = ->
+    videoFolder = document.getElementById('folder').value
+    
+    cmd = switch getOS()
+        when 'linux'
+            """xdg-open "#{videoFolder}" """
+        when 'macos'
+            """open "#{videoFolder}" """
+        when 'windows'
+            """explorer "#{videoFolder}" """
+    
+    if openVideoFolderFlag
+        openVideoFolderFlag = false
+        msg = 'The Video folder may open in the taskbar<br><br>'
+        msg += 'or behind this browser window.'
+        await timedAlert('Please note', '', msg, 5000)
         
-        cmd = switch getOS()
-            when 'linux'
-                """xdg-open "#{videoFolder}" """
-            when 'macos'
-                """open "#{videoFolder}" """
-            when 'windows'
-                """explorer "#{videoFolder}" """
-        
-        if openFolderWarning
-            openFolderWarning = false
-            msg = 'The Video folder may open in the taskbar<br><br>'
-            msg += 'or behind this browser window.'
-            await timedAlert('Please note', '', msg, 5000)
-            
-        socket_send( 'run', cmd, 'OPEN FOLDER')
-
-document.getElementById('openfolder').onclick = setOpenFolderClickHandler()
+    socket_send( 'run', cmd, 'OPEN FOLDER')
 
 # --------------------------------------------------------------------
 # 'About' button click
 document.getElementById('about').onclick = ->
     msg = '''
-        YDownloader 1.1<br><br>
+        YDownloader 1.0<br><br>
         Using CoffeeScript 2.7<br><br>
         Copyright \u00A9 2025 - RonLinu
         '''
