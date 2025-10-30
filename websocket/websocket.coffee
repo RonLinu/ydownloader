@@ -46,7 +46,10 @@ wss.on 'connection', (ws) ->
             when "run"
                 console.log "Server received: #{values.cmd}"
                 exec values.cmd, (error, stdout, stderr) ->
-                    if error then ws.send "#{error}"
+                    if error
+                        console.log "#{error}\n #{stderr}"
+                    else if stdout
+                        ws.send stdout
 
 # ---------------------------------------------------------------------
 console.log "WebSocket server running on port: #{socketport}"

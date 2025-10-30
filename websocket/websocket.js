@@ -57,7 +57,9 @@ wss.on('connection', function(ws) {
         console.log(`Server received: ${values.cmd}`);
         return exec(values.cmd, function(error, stdout, stderr) {
           if (error) {
-            return ws.send(`${error}`);
+            return console.log(`${error}\n ${stderr}`);
+          } else if (stdout) {
+            return ws.send(stdout);
           }
         });
     }
