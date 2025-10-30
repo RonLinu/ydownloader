@@ -19,6 +19,8 @@
             <input type="url" size="80" id="videoUrl" value="">
             &nbsp;
             <button id="download" type="button" disabled>Download</button>
+            &nbsp;
+            <button id="openfolder" type="button">Open video folder</button>
             <br><br>
             <button id="help" type="button">Help</button>
             &nbsp;
@@ -42,22 +44,5 @@
             </fieldset>
           </div>
         </form>
-
-      <br>
-      <div class="system-row">
-        <label for="folder" class="label-left">Download Folder</label>
-        <input type="text" size="40" id="folder" value="$HOME/Videos">
-         <div class="os-group">
-            <button id="openfolder" type="button">Open folder</button>
-           <label><input type="radio" name="os" value="windows">Windows</label>
-           <label><input type="radio" name="os" value="macos">MacOS</label>
-           <label><input type="radio" name="os" value="linux">Linux</label>
-         </div>
-       </div>
-    </div>
-    
-    <br>    
-    <label id="footer"></label>
-
 </body>
 </html>

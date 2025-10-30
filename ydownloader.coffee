@@ -27,8 +27,7 @@ do ->
         document.body.innerHTML = 'The application has been closed.'
 
     socket.onmessage = (event) ->
-        if event.data.indexOf('Error') > -1
-            showAlert('', 'error', event.data)
+        console.log event.data
             
 # --------------------------------------
 socket_send = ( action, command, tag ) ->
@@ -49,9 +48,6 @@ window.addEventListener 'beforeunload', (event) ->
 window.onload = ->
     # Conveniently focus on video URL field
     document.getElementById('videoUrl').focus()
-
-    # Preset the video folder by detecting underlying OS
-    changeVideoFolder( getOS() )
 
 # --------------------------------------
 languages =
@@ -169,20 +165,6 @@ do ->
         container.appendChild(brTag)
 
 # --------------------------------------
-do ->
-    # Run this event listener when user select an OS radio button
-    osChange = (event) ->
-        selectedOS = event.target.value
-        changeVideoFolder selectedOS
-
-    # Get all OS radio buttons
-    osButtons = document.querySelectorAll('input[name="os"]')
-
-    # Event listener to each OS radio button
-    for osButton in osButtons
-        osButton.addEventListener 'change', osChange
-
-# --------------------------------------
 showAlert = (title, icon, msg, textalign='center') ->
     Swal.fire
         title: title
@@ -222,22 +204,17 @@ getOS = ->
         else 'unknown'
 
 # --------------------------------------
-changeVideoFolder = (os) ->
-    videoFolder = document.getElementById('folder')
-
-    # Change 'Download Folder' field content
-    videoFolder.value = switch os
+getVideoFolder = ->
+    switch getOS()
         when 'linux' then '$HOME/Videos'
         when 'macos' then '$HOME/Movies'
         else '%USERPROFILE%\\Videos'
-        
-    # Also change radio button to corresponding OS
-    document.querySelector("input[name='os'][value='#{os}']").checked = true
 
 # --------------------------------------------------------------------
 # 'Open folder' button click
 document.getElementById('openfolder').onclick = ->
-    videoFolder = document.getElementById('folder').value
+    
+    videoFolder = getVideoFolder()
     
     cmd = switch getOS()
         when 'linux'
@@ -249,9 +226,9 @@ document.getElementById('openfolder').onclick = ->
     
     if openVideoFolderFlag
         openVideoFolderFlag = false
-        msg = 'The Video folder may open in the taskbar<br><br>'
-        msg += 'or behind this browser window.'
-        await timedAlert('Please note', '', msg, 5000)
+        msg = 'Sometimes the video folder can open in the taskbar<br>'
+        msg += 'or behind this browser window.<br><br>'
+        await showAlert('Please note', '', msg)
         
     socket_send( 'run', cmd, 'OPEN FOLDER')
 
@@ -259,7 +236,7 @@ document.getElementById('openfolder').onclick = ->
 # 'About' button click
 document.getElementById('about').onclick = ->
     msg = '''
-        YDownloader 1.0<br><br>
+        YDownloader 1.1<br><br>
         Using CoffeeScript 2.7<br><br>
         Copyright \u00A9 2025 - RonLinu
         '''
@@ -333,7 +310,7 @@ document.getElementById('download').onclick = ->
             subtitles = abbreviations.join(",")
             option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs '
 
-    videoFolder = document.getElementById('folder').value.trim()
+    videoFolder = getVideoFolder()
 
     ytdlp_cmd = 'yt-dlp ' +
          '--concurrent-fragments 2 ' +
@@ -346,9 +323,12 @@ document.getElementById('download').onclick = ->
          '--buffer-size 16M ' +
          '"' + url + '"'
 
-    if getOS() is 'windows'
-        final_cmd = """cmd /c start "" cmd /k #{ytdlp_cmd} && del /q *.vtt"""
-    else
-        final_cmd = "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; rm '#{videoFolder}/*.vtt'; echo; bash'"
+    final_cmd = switch getOS()
+        when 'windows'
+            """cmd /c start "" cmd /k #{ytdlp_cmd}"""
+        when 'linux'
+            "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash'"
+        when 'macos'
+            """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
         
     socket_send( 'run', final_cmd, 'YT-DLP' )
