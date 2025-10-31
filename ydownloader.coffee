@@ -1,6 +1,4 @@
 
-openVideoFolderFlag = true
-
 if location.hash is ''
     msg = 'This web application must be started with the WebSocket server.'
     document.body.innerHTML = msg
@@ -173,16 +171,6 @@ showAlert = (title, icon, msg, textalign='center') ->
         confirmButtonText: 'OK'
 
 # --------------------------------------
-timedAlert = (title, icon, msg, milliseconds)->
-    Swal.fire
-        title: title
-        icon: icon,
-        html: msg
-        timer: milliseconds
-        timerProgressBar: true
-        showConfirmButton: true
-
-# --------------------------------------
 askConfirm = (title, icon, msg) ->
     Swal.fire
         title: title
@@ -198,37 +186,35 @@ getOS = ->
     platform = navigator.platform
 
     switch
+        when platform.indexOf('Win')   > -1 then 'windows'
         when platform.indexOf('Linux') > -1 then 'linux'
         when platform.indexOf('Mac')   > -1 then 'macos'
-        when platform.indexOf('Win')   > -1 then 'windows'
         else 'unknown'
 
 # --------------------------------------
 getVideoFolder = ->
     switch getOS()
+        when 'windows' then '%USERPROFILE%\\Videos'
         when 'linux' then '$HOME/Videos'
         when 'macos' then '$HOME/Movies'
-        else '%USERPROFILE%\\Videos'
 
 # --------------------------------------------------------------------
-# 'Open folder' button click
+# 'Open video folder' button click
 document.getElementById('openfolder').onclick = ->
-    
+
     videoFolder = getVideoFolder()
     
     cmd = switch getOS()
+        when 'windows'
+            """explorer "#{videoFolder}" """
         when 'linux'
             """xdg-open "#{videoFolder}" """
         when 'macos'
             """open "#{videoFolder}" """
-        when 'windows'
-            """explorer "#{videoFolder}" """
     
-    if openVideoFolderFlag
-        openVideoFolderFlag = false
-        msg = 'Sometimes the video folder can open in the taskbar<br>'
-        msg += 'or behind this browser window.<br><br>'
-        await showAlert('Please note', '', msg)
+    msg = 'If you don’t see the video folder showing up,<br>'
+    msg += 'look in your task bar OR behind the browser window.'
+    await showAlert('Quick note', '', msg)
         
     socket_send( 'run', cmd, 'OPEN FOLDER')
 
@@ -238,7 +224,7 @@ document.getElementById('about').onclick = ->
     msg = '''
         YDownloader 1.1<br><br>
         Using CoffeeScript 2.7<br><br>
-        Copyright \u00A9 2025 - RonLinu
+        \u00A9 2025 - RonLinu
         '''
 
     showAlert('', '', msg)
@@ -325,10 +311,10 @@ document.getElementById('download').onclick = ->
 
     final_cmd = switch getOS()
         when 'windows'
-            """cmd /c start "" cmd /k #{ytdlp_cmd}"""
+            """cmd /c start "" cmd /k #{ytdlp_cmd} """
         when 'linux'
-            "xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash'"
+            """xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash' """
         when 'macos'
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
-        
+
     socket_send( 'run', final_cmd, 'YT-DLP' )
