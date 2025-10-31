@@ -30,7 +30,6 @@ wss.on('error', function(err) {
   return process.exit(1);
 });
 
-
 // --------------------------------------
 // When a client connects
 wss.on('connection', function(ws) {
@@ -69,7 +68,6 @@ wss.on('connection', function(ws) {
 // ---------------------------------------------------------------------
 console.log(`WebSocket server running on port: ${socketport}`);
 
-
 // ----------------------------
 randomHex = function() {
   return Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, '0'); // random 32-bit integer // convert to hex // ensure 8 characters
@@ -79,15 +77,17 @@ randomHex = function() {
 // ----------------------------
 openBrowser = function(url) {
   switch (process.platform) {
-    case 'darwin':
-      return exec(`open '${url}'`);
     case 'win32':
       return exec(`start ${url}`);
-    default:
+    case 'linux':
       return exec(`xdg-open '${url}'`);
+    case 'darwin':
+      return exec(`open '${url}'`);
+    default:
+      console.error('Unsupported operating system');
+      return process.exit(1);
   }
 };
-
 
 // --------------------------------------
 identifier = `#${randomHex()},${socketport}`;

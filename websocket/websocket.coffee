@@ -6,8 +6,8 @@ if webpage is '' or socketport is ''
     console.log 'Syntax: node websocket.js <application_url> <socket_port>'
     process.exit 0
 
-WebSocket = require('ws')       # installed with: npm install ws
-{exec} = require('child_process')
+WebSocket = require 'ws'            # installed with: npm install ws
+{exec} = require 'child_process'
 
 wss = new WebSocket.Server { port: socketport }
 
@@ -18,7 +18,7 @@ wss.on 'error', (err) ->
     else
         firstline = err.message.split('\n')[0]
         console.error 'WebSocket server error:', firstline
-    process.exit 1  
+    process.exit 1
 
 # --------------------------------------
 # When a client connects
@@ -53,22 +53,25 @@ wss.on 'connection', (ws) ->
 
 # ---------------------------------------------------------------------
 console.log "WebSocket server running on port: #{socketport}"
-  
+
 # ----------------------------
 randomHex = ->
   Math.floor(Math.random() * 0xFFFFFFFF)  # random 32-bit integer
     .toString(16)                         # convert to hex
     .padStart(8, '0')                     # ensure 8 characters
-    
+
 # ----------------------------
 openBrowser = (url) ->
     switch process.platform
-        when 'darwin'
-            exec "open '#{url}'"      # macOS
         when 'win32'
             exec "start #{url}"       # Windows
-        else
+        when 'linux'
             exec "xdg-open '#{url}'"  # Linux and others
+        when 'darwin'
+            exec "open '#{url}'"      # macOS
+        else
+            console.error 'Unsupported operating system'
+            process.exit 1
 
 # --------------------------------------
 
