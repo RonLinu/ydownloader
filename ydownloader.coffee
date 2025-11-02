@@ -1,37 +1,48 @@
 
 # ********************** WEBSOCKET HANDLING ***************************
 socket = null
+platform = location.hash.split(',')[1]
 
 do ->
-    if location.hash is '#BUSY'
-        document.body.innerHTML = 'The WebSocket is already in use.'
-        throw new Error "Stop execution"
+    switch location.hash
+        when '#BUSY'
+            document.body.innerHTML = 'WebSocket already in use'
+            throw new Error "Stop execution: socket already in use"
+        when '#ERROR'
+            document.body.innerHTML = 'WebSocket connection error'
+            throw new Error "Stop execution: socket connection error"
 
-    port = location.hash.substring(1)
-
+    port     = location.hash.split(',')[2]
+    
     if parseInt('0' + port) not in [8080..8089]
-        msg = 'This web application must be started with the WebSocket server. '
+        msg = 'This web application must be started by the WebSocket server.'
         document.body.innerHTML = msg
-        throw new Error "Stop execution"
-        # This will have the server to close after 5 sec
+        throw new Error "Stop execution: trying to launch browser directly"
 
     socket = new WebSocket "ws://localhost:#{port}/ws"
-
+    
     socket.onopen = (event) ->
         console.log 'WebSocket connection established'
 
     socket.onclose = (event) ->
-        console.log 'WebSocket closed'
-        document.body.innerHTML = 'The application has been closed.'
+        console.log 'WebSocket connection closed'
+        document.body.innerHTML = 'Application closed.'
+        #~ image_file = "resources/closed.png"
+        #~ document.body.innerHTML = ""
+        #~ document.body.style.display = 'flex'
+        #~ document.body.style.justifyContent = 'center'
+        #~ img = document.createElement 'img'
+        #~ img.src = image_file
+        #~ document.body.appendChild img
 
     socket.onmessage = (event) ->
-        # Future dispatcher for received messages...
+        # Dispatcher for received messages (to be implemented if needed)
         console.log event.data
-            
+
 # --------------------------------------
 socket_send = ( action, command, tag ) ->
     cmd = JSON.stringify
-        id: location.hash       # use full fragment as identifier
+        id: location.hash
         action: action
         cmd: command
         tag: tag
@@ -183,43 +194,33 @@ askConfirm = (title, icon, msg) ->
         focusCancel: true
 
 # --------------------------------------
-getOS = ->
-    platform = navigator.platform
-
-    switch
-        when platform.indexOf('Win')   > -1 then 'windows'
-        when platform.indexOf('Linux') > -1 then 'linux'
-        when platform.indexOf('Mac')   > -1 then 'macos'
-        else 'unknown'
-
-# --------------------------------------
 getVideoFolder = ->
-    switch getOS()
-        when 'windows' then '%USERPROFILE%\\Videos'
+    switch platform
+        when 'win32' then '%USERPROFILE%\\Videos'
         when 'linux' then '$HOME/Videos'
-        when 'macos' then '$HOME/Movies'
+        when 'darwin' then '$HOME/Movies'
 
 # --------------------------------------------------------------------
-openVideoFolder = ->
-  once = true       # closure variable
+openVideoFolder = ->            # closure
+  once = true
   ->
     videoFolder = getVideoFolder()
-    
-    cmd = switch getOS()
-        when 'windows'
+
+    cmd = switch platform
+        when 'win32'
             """explorer "#{videoFolder}" """
         when 'linux'
             """xdg-open "#{videoFolder}" """
-        when 'macos'
+        when 'darwin'
             """open "#{videoFolder}" """
-    
-    if once 
+
+    if once
         once = false
         msg = 'If you don’t see the video folder showing up,<br>'
         msg += 'look in your task bar OR behind the browser window.<br>'
         msg += '<br><i>This note is shown only once per session</i>'
         await showAlert('Quick note', '', msg)
-        
+
     socket_send( 'run', cmd, 'OPEN FOLDER')
 
 # 'Open video folder' button click
@@ -229,7 +230,7 @@ document.getElementById('openfolder').onclick = openVideoFolder()
 # 'About' button click
 document.getElementById('about').onclick = ->
     msg = '''
-        YDownloader 1.11<br><br>
+        YDownloader 0.8<br><br>
         Using CoffeeScript 2.7<br><br>
         \u00A9 2025 - RonLinu
         '''
@@ -262,7 +263,7 @@ document.getElementById('download').onclick = ->
         catch
             false
     # ------------------------------------
-    
+
     url = document.getElementById('videoUrl').value.trim()
 
     if not url
@@ -317,12 +318,12 @@ document.getElementById('download').onclick = ->
          '--buffer-size 16M ' +
          '"' + url + '"'
 
-    final_cmd = switch getOS()
-        when 'windows'
+    final_cmd = switch platform
+        when 'win32'
             """cmd /c start "" cmd /k #{ytdlp_cmd} """
         when 'linux'
             """xterm -geometry 150x24 -e sh -c '#{ytdlp_cmd}; echo; bash' """
-        when 'macos'
+        when 'darwin'
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
 
     socket_send( 'run', final_cmd, 'YT-DLP' )
