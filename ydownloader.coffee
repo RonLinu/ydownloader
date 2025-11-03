@@ -28,7 +28,7 @@ do ->
     socket.onclose = (event) ->
         console.log 'WebSocket connection closed'
         document.body.innerHTML = 'Application closed.'
-  
+
     socket.onmessage = (event) ->
         # Received messages from server
         serverReply = event.data
@@ -194,9 +194,8 @@ getVideoFolder = ->
         when 'darwin' then '$HOME/Movies'
 
 # --------------------------------------------------------------------
-openVideoFolder = ->            
-  once = true           # closure
-  ->
+# 'Open video folder' button click
+document.getElementById('openfolder').onclick = ->
     videoFolder = getVideoFolder()
 
     cmd = switch platform
@@ -207,17 +206,12 @@ openVideoFolder = ->
         when 'darwin'
             """open "#{videoFolder}" """
 
-    if once
-        once = false
-        msg = 'If you don’t see the video folder showing up,<br>'
-        msg += 'look in your task bar OR behind the browser window.<br>'
-        msg += '<br><i>This note is shown only once per session</i>'
-        await showAlert('Quick note', '', msg)
+    msg = 'If you don’t see the video folder showing up,<br>'
+    msg += 'look behind the browser window or in the task bar.<br>'
+    msg += '<br><i>Click OK to open the folder</i>'
+    await showAlert('', '', msg)
 
     socket_send('run', cmd)
-
-# 'Open video folder' button click
-document.getElementById('openfolder').onclick = openVideoFolder()
 
 # --------------------------------------------------------------------
 # 'About' button click
@@ -234,10 +228,10 @@ document.getElementById('about').onclick = ->
 # 'Check dependencies' button click
 document.getElementById('dependencies').onclick = ->
     results = ''
-    
+
     gather_results = (result, name) ->
         results += "<b>#{name}&nbsp;</b><span style='color: "
-        
+
         if result.indexOf('is not') > -1 or result.indexOf('not found') > -1
             results += "red;'>&#x2718;</span><br>"
         else
@@ -267,8 +261,18 @@ document.getElementById('dependencies').onclick = ->
                 setTimeout check_xterm, 250
                 return
             gather_results serverReply, 'xterm '
-            
+
+        Swal.close()
         showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
+        
+    # Popup to warn the user to wait...
+    Swal.fire
+      title: 'Please wait'
+      text: 'Checking is in progress...'
+      showConfirmButton: false
+      allowOutsideClick: false
+      didOpen: () ->
+        Swal.showLoading()
 
     # Start tests of dependencies in sequence
     serverReply = ''
@@ -278,7 +282,12 @@ document.getElementById('dependencies').onclick = ->
 # --------------------------------------------------------------------
 # 'Help' button click
 document.getElementById('help').onclick = ->
-    showAlert('Help', '', window.HELP, 'left')
+    msg = window.HELP
+    if platform is 'linux'
+        # Add Linux 'xterm' to the list of dependencies required
+        msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>')
+
+    showAlert('Help', '', msg, 'left')
 
 # --------------------------------------------------------------------
 # 'Exit' button click
@@ -293,9 +302,9 @@ document.getElementById('exit').onclick = ->
 document.getElementById('download').onclick = ->
 
     # Local function to check URL validity
-    isValidUrl = (string) ->
+    isValidUrl = (urlToTest) ->
         try
-            urlObj = new URL(string)
+            urlObj = new URL(urlToTest)
             urlObj.protocol is 'http:' or urlObj.protocol is 'https:'
         catch
             false
