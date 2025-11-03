@@ -18,10 +18,10 @@ The total storage needed on the user PC is (beside Node.js):
 NOTE 2: it is the WebSocket server itself that opens the web page by launching the default browser  
 of the user PC. This makes the web application as easy to launch as a real desktop application.  
 This convenient and automated process is also necessary to pass information to the JavaScript  
-running the web application. This information is the web socket port number and a security session  
-identifier, both are passed in the fragment identifier appended to the web page URL.
+running the web application. This information is the web socket port number, a security session  
+identifier and the user platform, all are passed in the fragment identifier appended to the web page URL.
 
-Opening the web page using a bookmark, a link or typing the url will issue an error message.
+Opening the web page using a bookmark, a link, pasting or typing the url will issue an error message.
   
 -------------------------------------
 INSTALLATION OF THE WEBSOCKET SERVER:
