@@ -28,11 +28,11 @@ INSTALLATION OF THE WEBSOCKET SERVER:
 
 - Node.js must be installed on your system (if not already installed)
 - yt-dlp and ffmepg utilities must be installed and in your PATH
-- download the "websocket" directory and put it on your drive
-- Linux only: ensure xterm terminal is installed
+- ensure xterm terminal is installed (Linux only)
+- download the "websocket" directory and copy anywhere on user PC
 
-To run:
-- Windows:     start with ydownloader.vbs
-- Linux/MacOS: start with ydownloader.sh
+To run the web application, go in the 'websocket' directory:
+- On Windows:       start with ydownloader.vbs
+- On Linux/MacOS:   start with ydownloader.sh
 
 The WebSocket server will automatically open the web application using your default browser.
