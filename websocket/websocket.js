@@ -28,8 +28,8 @@ wss = new WebSocket.Server({
 wss._server.on('listening', function() {
   // Port opened successfully
   console.log('WebSocket server listening on port', socketport);
-  // Client (browser) must respond within 5 sec or server shuts down
-  setTimeout(shutdown, 5000);
+  // Client (browser) must respond within 10 sec or server will close
+  setTimeout(shutdown, 10000);
   // Launch client (browser)
   fragmentId = '#' + randomHex() + ',' + process.platform + ',' + socketport;
   return launchBrowser(fragmentId);
@@ -76,12 +76,9 @@ wss.on('connection', function(ws) {
     }
     switch (values.action) {
       case 'run':
-        ws.send(`${values.action},${values.tag}`);
         console.log('Server received:', values.cmd);
         return exec(values.cmd, function(error, stdout, stderr) {
-          if (error) {
-            return console.log(error, '\n', stderr);
-          }
+          return ws.send(`${stdout} ${stderr} ${error}`);
         });
     }
   });

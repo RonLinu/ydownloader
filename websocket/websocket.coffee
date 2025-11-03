@@ -20,8 +20,8 @@ wss._server.on 'listening', ->
     # Port opened successfully
     console.log 'WebSocket server listening on port', socketport
 
-    # Client (browser) must respond within 5 sec or server shuts down
-    setTimeout shutdown, 5000
+    # Client (browser) must respond within 10 sec or server will close
+    setTimeout shutdown, 10000
 
     # Launch client (browser)
     fragmentId = '#' + randomHex() + ',' + process.platform + ',' + socketport
@@ -66,11 +66,9 @@ wss.on 'connection', (ws) ->
 
         switch values.action
             when 'run'
-                ws.send "#{values.action},#{values.tag}"
                 console.log 'Server received:', values.cmd
                 exec values.cmd, (error, stdout, stderr) ->
-                    if error
-                        console.log error, '\n', stderr
+                    ws.send "#{stdout} #{stderr} #{error}"
 
 # ---------------------------------------------------------------------
 openBrowser = (url) ->
