@@ -2,6 +2,7 @@
 # ********************** WEBSOCKET HANDLING ***************************
 socket = null
 platform = location.hash.split(',')[1]
+serverReply = ''
 
 do ->
     switch location.hash
@@ -12,47 +13,39 @@ do ->
             document.body.innerHTML = 'WebSocket connection error'
             throw new Error "Stop execution: socket connection error"
 
-    port     = location.hash.split(',')[2]
-    
+    port = location.hash.split(',')[2]
+
     if parseInt('0' + port) not in [8080..8089]
         msg = 'This web application must be started by the WebSocket server.'
         document.body.innerHTML = msg
         throw new Error "Stop execution: trying to launch browser directly"
 
     socket = new WebSocket "ws://localhost:#{port}/ws"
-    
+
     socket.onopen = (event) ->
         console.log 'WebSocket connection established'
 
     socket.onclose = (event) ->
         console.log 'WebSocket connection closed'
         document.body.innerHTML = 'Application closed.'
-        #~ image_file = "resources/closed.png"
-        #~ document.body.innerHTML = ""
-        #~ document.body.style.display = 'flex'
-        #~ document.body.style.justifyContent = 'center'
-        #~ img = document.createElement 'img'
-        #~ img.src = image_file
-        #~ document.body.appendChild img
-
+  
     socket.onmessage = (event) ->
-        # Dispatcher for received messages (to be implemented if needed)
-        console.log event.data
+        # Received messages from server
+        serverReply = event.data
 
 # --------------------------------------
-socket_send = ( action, command, tag ) ->
+socket_send = ( action, command ) ->
     cmd = JSON.stringify
         id: location.hash
         action: action
         cmd: command
-        tag: tag
     socket.send cmd
 
 # ******************* END OF WEBSOCKET HANDLING ***********************
 
 window.addEventListener 'beforeunload', (event) ->
     # Terminate the external socket server program
-    socket_send( 'exit', '', 'EXIT' )
+    socket_send( 'exit', '')
 
 # --------------------------------------
 window.onload = ->
@@ -183,10 +176,10 @@ showAlert = (title, icon, msg, textalign='center') ->
         confirmButtonText: 'OK'
 
 # --------------------------------------
-askConfirm = (title, icon, msg) ->
+askConfirm = (title, icon, msg, textalign='center') ->
     Swal.fire
         title: title
-        html: msg
+        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
         icon: icon
         showCancelButton: true
         confirmButtonText: 'Yes'
@@ -201,8 +194,8 @@ getVideoFolder = ->
         when 'darwin' then '$HOME/Movies'
 
 # --------------------------------------------------------------------
-openVideoFolder = ->            # closure
-  once = true
+openVideoFolder = ->            
+  once = true           # closure
   ->
     videoFolder = getVideoFolder()
 
@@ -221,7 +214,7 @@ openVideoFolder = ->            # closure
         msg += '<br><i>This note is shown only once per session</i>'
         await showAlert('Quick note', '', msg)
 
-    socket_send( 'run', cmd, 'OPEN FOLDER')
+    socket_send('run', cmd)
 
 # 'Open video folder' button click
 document.getElementById('openfolder').onclick = openVideoFolder()
@@ -238,6 +231,51 @@ document.getElementById('about').onclick = ->
     showAlert('', '', msg)
 
 # --------------------------------------------------------------------
+# 'Check dependencies' button click
+document.getElementById('dependencies').onclick = ->
+    results = ''
+    
+    gather_results = (result, name) ->
+        results += "<b>#{name}&nbsp;</b><span style='color: "
+        
+        if result.indexOf('is not') > -1 or result.indexOf('not found') > -1
+            results += "red;'>&#x2718;</span><br>"
+        else
+            results += "green;'>&#x2714;</span><br>"
+
+    check_ytdlp = ->
+        if serverReply.trim() is ''
+            setTimeout check_ytdlp, 250
+            return
+        gather_results serverReply, 'yt-dlp'
+        serverReply = ''
+        socket_send('run', 'ffmpeg -version')
+        setTimeout check_ffmpeg, 250
+
+    check_ffmpeg = ->
+        if serverReply.trim() is ''
+            setTimeout check_ffmpeg, 250
+            return
+        gather_results serverReply, 'ffmpeg'
+        serverReply = ''
+        socket_send('run', 'xterm -version')
+        setTimeout check_xterm, 250
+
+    check_xterm = ->
+        if platform is 'linux'
+            if serverReply.trim() is ''
+                setTimeout check_xterm, 250
+                return
+            gather_results serverReply, 'xterm '
+            
+        showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
+
+    # Start tests of dependencies in sequence
+    serverReply = ''
+    socket_send('run', 'yt-dlp --version')
+    setTimeout check_ytdlp, 250
+
+# --------------------------------------------------------------------
 # 'Help' button click
 document.getElementById('help').onclick = ->
     showAlert('Help', '', window.HELP, 'left')
@@ -245,8 +283,7 @@ document.getElementById('help').onclick = ->
 # --------------------------------------------------------------------
 # 'Exit' button click
 document.getElementById('exit').onclick = ->
-    result = await askConfirm('', 'question',
-        'This will terminate the application.<br><br>Are you sure?')
+    result = await askConfirm('', 'question', 'Close the application?')
 
     if result.isConfirmed
         socket.close()
@@ -326,4 +363,4 @@ document.getElementById('download').onclick = ->
         when 'darwin'
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
 
-    socket_send( 'run', final_cmd, 'YT-DLP' )
+    socket_send('run', final_cmd)
