@@ -1,12 +1,9 @@
 
 Experimental web application to download videos on the user PC.
 
-This is a work in progress...
-
-Goal: this web application uses a WebSocket server that is much lighter, even though  
-less powerfull, than packagers like Electron to run a JavaScript application that can:  
-  - have access to the operating system to execute system utilities
-  - have a graphical user interface using HTML/CSS
+Goal: to create a web application using a WebSocket server that is much lighter, even though  
+less powerfull, than packagers like Electron to run a JavaScript application that still can  
+have access to the operating system to execute system utilities.
 
 NOTE 1: only the WebSocket server is needed on the user PC to run this web application.  
 The total storage needed on the user PC is (beside Node.js):
@@ -27,9 +24,12 @@ Opening the web page using a bookmark, a link, pasting or typing the url will is
 INSTALLATION OF THE WEBSOCKET SERVER:
 
 - Node.js must be installed on your system (if not already installed)
-- yt-dlp and ffmepg utilities must be installed and in your PATH
-- ensure xterm terminal is installed (Linux only)
-- download the "websocket" directory and copy anywhere on user PC
+- only copy the "websocket" directory on the user machine
+- install yt-dlp and ffmepg utilities on the user machine, ensure they are in your PATH
+- Linux only: ensure xterm terminal is installed
+
+On Linux, yt-dlp and ffmpeg are available in repositories.
+On Windows, you have to download them for their websites.
 
 To run the web application, go in the 'websocket' directory:
 - On Windows:       start with ydownloader.vbs
