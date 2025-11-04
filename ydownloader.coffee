@@ -297,12 +297,12 @@ document.getElementById('help').onclick = ->
     showAlert('Help', '', msg, 'left')
 
 # --------------------------------------------------------------------
-# 'Quit' button click
-document.getElementById('quit').onclick = ->
-    result = await askConfirm('', 'question', 'Quit the application?')
+#~ # 'Quit' button click
+#~ document.getElementById('quit').onclick = ->
+    #~ result = await askConfirm('', 'question', 'Quit the application?')
 
-    if result.isConfirmed
-        socket.quit()
+    #~ if result.isConfirmed
+        #~ socket.quit()
 
 # --------------------------------------
 # 'Download' button click

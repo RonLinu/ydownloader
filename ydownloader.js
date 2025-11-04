@@ -322,14 +322,12 @@ document.getElementById('help').onclick = function() {
 };
 
 // --------------------------------------------------------------------
-// 'Quit' button click
-document.getElementById('quit').onclick = async function() {
-  var result;
-  result = (await askConfirm('', 'question', 'Quit the application?'));
-  if (result.isConfirmed) {
-    return socket.quit();
-  }
-};
+//~ # 'Quit' button click
+//~ document.getElementById('quit').onclick = ->
+//~ result = await askConfirm('', 'question', 'Quit the application?')
+
+//~ if result.isConfirmed
+//~ socket.quit()
 
 // --------------------------------------
 // 'Download' button click
