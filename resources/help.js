@@ -7,5 +7,5 @@ in your PATH to be able to download videos:
 - <b>yt-dlp</b> video download utility</b>
 - <b>ffmpeg</b> video conversion utility</b>
 </pre>
-To verify, click the 'Check dependencies' button.
+To verify this, click the 'Check dependencies' button.
 `
