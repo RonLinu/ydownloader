@@ -1,24 +1,21 @@
 
-# ********************** WEBSOCKET HANDLING ***************************
-socket = null
-platform = location.hash.split(',')[1]
-serverReply = ''
-
-do ->
+# ********************** WEBSOCKET HANDLER ****************************
+socketHandler = ->
     switch location.hash
         when '#BUSY'
             document.body.innerHTML = 'WebSocket already in use'
-            throw new Error "Stop execution: socket already in use"
+            throw new Error document.body.innerHTML
         when '#ERROR'
             document.body.innerHTML = 'WebSocket connection error'
-            throw new Error "Stop execution: socket connection error"
+            throw new Error document.body.innerHTML
 
+    serverReply = ''
+    os   = location.hash.split(',')[1]
     port = location.hash.split(',')[2]
 
-    if parseInt('0' + port) not in [8080..8089]
-        msg = 'This web application must be started by the WebSocket server.'
-        document.body.innerHTML = msg
-        throw new Error "Stop execution: trying to launch browser directly"
+    if parseInt('0' + port) not in [8080..8089] or os not in ['win32','linux','darwin']
+        document.body.innerHTML = 'This web application must be started by the WebSocket server.'
+        throw new Error document.body.innerHTML
 
     socket = new WebSocket "ws://localhost:#{port}/ws"
 
@@ -31,25 +28,36 @@ do ->
 
     socket.onmessage = (event) ->
         # Received messages from server
-        serverReply = event.data
+        serverReply = event.data.trim()
 
-# --------------------------------------
-socket_send = ( action, command ) ->
-    cmd = JSON.stringify
-        id: location.hash
-        action: action
-        cmd: command
-    socket.send cmd
+    send = ( action, command ) ->
+        serverReply = ''
+        cmd = JSON.stringify
+            id: location.hash
+            action: action
+            cmd: command
+        socket.send cmd
 
-# ******************* END OF WEBSOCKET HANDLING ***********************
+    receive = -> serverReply
+
+    quit = -> send 'quit', ''
+
+    platform = -> os
+        
+    { send, receive, quit, platform }
+
+# Start socket handler as a closure
+socket = socketHandler()
+
+# ******************* END OF WEBSOCKET HANDLER ************************
 
 window.addEventListener 'beforeunload', (event) ->
     # Terminate the external socket server program
-    socket_send( 'exit', '')
+    socket.quit()
 
 # --------------------------------------
 window.onload = ->
-    # Conveniently focus on video URL field
+    # Focus on video URL field when page is loaded
     document.getElementById('videoUrl').focus()
 
 # --------------------------------------
@@ -174,6 +182,7 @@ showAlert = (title, icon, msg, textalign='center') ->
         html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
         icon: icon
         confirmButtonText: 'OK'
+        allowOutsideClick: false
 
 # --------------------------------------
 askConfirm = (title, icon, msg, textalign='center') ->
@@ -185,10 +194,11 @@ askConfirm = (title, icon, msg, textalign='center') ->
         confirmButtonText: 'Yes'
         cancelButtonText: 'No'
         focusCancel: true
+        allowOutsideClick: false
 
 # --------------------------------------
 getVideoFolder = ->
-    switch platform
+    switch socket.platform()
         when 'win32' then '%USERPROFILE%\\Videos'
         when 'linux' then '$HOME/Videos'
         when 'darwin' then '$HOME/Movies'
@@ -198,7 +208,7 @@ getVideoFolder = ->
 document.getElementById('openfolder').onclick = ->
     videoFolder = getVideoFolder()
 
-    cmd = switch platform
+    cmd = switch socket.platform()
         when 'win32'
             """explorer "#{videoFolder}" """
         when 'linux'
@@ -208,16 +218,16 @@ document.getElementById('openfolder').onclick = ->
 
     msg = 'If you don’t see the video folder showing up,<br>'
     msg += 'look behind the browser window or in the task bar.<br>'
-    msg += '<br><i>Click OK to open the folder</i>'
+    msg += '<br><i>click Ok to open the folder</i>'
     await showAlert('', '', msg)
 
-    socket_send('run', cmd)
+    socket.send('run', cmd)
 
 # --------------------------------------------------------------------
 # 'About' button click
 document.getElementById('about').onclick = ->
     msg = '''
-        YDownloader 0.8<br><br>
+        YDownloader 0.9<br><br>
         Using CoffeeScript 2.7<br><br>
         \u00A9 2025 - RonLinu
         '''
@@ -229,7 +239,7 @@ document.getElementById('about').onclick = ->
 document.getElementById('dependencies').onclick = ->
     results = ''
 
-    gather_results = (result, name) ->
+    gather_results = (name, result) ->
         results += "<b>#{name}&nbsp;</b><span style='color: "
 
         if result.indexOf('is not') > -1 or result.indexOf('not found') > -1
@@ -238,34 +248,32 @@ document.getElementById('dependencies').onclick = ->
             results += "green;'>&#x2714;</span><br>"
 
     check_ytdlp = ->
-        if serverReply.trim() is ''
+        if not socket.receive()
             setTimeout check_ytdlp, 250
             return
-        gather_results serverReply, 'yt-dlp'
-        serverReply = ''
-        socket_send('run', 'ffmpeg -version')
+        gather_results 'yt-dlp', socket.receive()
+        socket.send('run', 'ffmpeg -version')
         setTimeout check_ffmpeg, 250
 
     check_ffmpeg = ->
-        if serverReply.trim() is ''
+        if not socket.receive()
             setTimeout check_ffmpeg, 250
             return
-        gather_results serverReply, 'ffmpeg'
-        serverReply = ''
-        socket_send('run', 'xterm -version')
+        gather_results 'ffmpeg', socket.receive()
+        socket.send('run', 'xterm -version')
         setTimeout check_xterm, 250
 
     check_xterm = ->
-        if platform is 'linux'
-            if serverReply.trim() is ''
+        if socket.platform() is 'linux'
+            if not socket.receive()
                 setTimeout check_xterm, 250
                 return
-            gather_results serverReply, 'xterm '
+            gather_results 'xterm ', socket.receive()
 
         Swal.close()
         showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
-        
-    # Popup to warn the user to wait...
+
+    # Show a wait dialog
     Swal.fire
       title: 'Please wait'
       text: 'Checking is in progress...'
@@ -274,37 +282,36 @@ document.getElementById('dependencies').onclick = ->
       didOpen: () ->
         Swal.showLoading()
 
-    # Start tests of dependencies in sequence
-    serverReply = ''
-    socket_send('run', 'yt-dlp --version')
+    # Start the sequence of tests, one dependency at a time
+    socket.send('run', 'yt-dlp --version')
     setTimeout check_ytdlp, 250
 
 # --------------------------------------------------------------------
 # 'Help' button click
 document.getElementById('help').onclick = ->
     msg = window.HELP
-    if platform is 'linux'
-        # Add Linux 'xterm' to the list of dependencies required
+    if socket.platform() is 'linux'
+        # Add Linux 'xterm' to the list of dependencies
         msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>')
 
     showAlert('Help', '', msg, 'left')
 
 # --------------------------------------------------------------------
-# 'Exit' button click
-document.getElementById('exit').onclick = ->
-    result = await askConfirm('', 'question', 'Close the application?')
+# 'Quit' button click
+document.getElementById('quit').onclick = ->
+    result = await askConfirm('', 'question', 'Quit the application?')
 
     if result.isConfirmed
-        socket.close()
+        socket.quit()
 
 # --------------------------------------
-# 'Generate yt-dlp command' button click
+# 'Download' button click
 document.getElementById('download').onclick = ->
 
     # Local function to check URL validity
-    isValidUrl = (urlToTest) ->
+    isValidUrl = (url) ->
         try
-            urlObj = new URL(urlToTest)
+            urlObj = new URL(url)
             urlObj.protocol is 'http:' or urlObj.protocol is 'https:'
         catch
             false
@@ -316,7 +323,7 @@ document.getElementById('download').onclick = ->
         showAlert('', 'error', 'The Video URL field is empty.')
         return
     else if not isValidUrl(url)
-        showAlert('', 'error', 'The Video URL is invalid.')
+        showAlert('', 'error', 'The Video URL is not valid.')
         return
 
     # Remove any playlist, just download the main video
@@ -364,7 +371,7 @@ document.getElementById('download').onclick = ->
          '--buffer-size 16M ' +
          '"' + url + '"'
 
-    final_cmd = switch platform
+    final_cmd = switch socket.platform()
         when 'win32'
             """cmd /c start "" cmd /k #{ytdlp_cmd} """
         when 'linux'
@@ -372,4 +379,4 @@ document.getElementById('download').onclick = ->
         when 'darwin'
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
 
-    socket_send('run', final_cmd)
+    socket.send('run', final_cmd)
