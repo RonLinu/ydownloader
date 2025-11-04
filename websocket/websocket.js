@@ -65,6 +65,11 @@ wss.on('connection', function(ws) {
     console.log('Client disconnected');
     return process.exit(0);
   });
+  ws.on('error', function() {
+    activeClient = null;
+    console.log('Client disconnected from error');
+    return process.exit(0);
+  });
   // When server receives a command from client
   return ws.on('message', function(message) {
     var values;
@@ -75,10 +80,14 @@ wss.on('connection', function(ws) {
       return;
     }
     switch (values.action) {
+      case 'quit':
+        console.log('Client disconnected on request');
+        ws.close();
+        return process.exit(0);
       case 'run':
         console.log('Server received:', values.cmd);
         return exec(values.cmd, function(error, stdout, stderr) {
-          return ws.send(`${stdout} ${stderr} ${error}`);
+          return ws.send(`${stdout} ~~~ ${stderr} ~~~ ${error}`);
         });
     }
   });

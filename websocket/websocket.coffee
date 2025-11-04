@@ -55,6 +55,11 @@ wss.on 'connection', (ws) ->
         console.log 'Client disconnected'
         process.exit 0
 
+    ws.on 'error', () ->
+        activeClient = null
+        console.log 'Client disconnected from error'
+        process.exit 0
+
    # When server receives a command from client
     ws.on 'message', (message) ->
         values = JSON.parse(message)
@@ -65,10 +70,14 @@ wss.on 'connection', (ws) ->
             return
 
         switch values.action
+            when 'quit'
+                console.log 'Client disconnected on request'
+                ws.close()
+                process.exit 0
             when 'run'
                 console.log 'Server received:', values.cmd
                 exec values.cmd, (error, stdout, stderr) ->
-                    ws.send "#{stdout} #{stderr} #{error}"
+                    ws.send "#{stdout} ~~~ #{stderr} ~~~ #{error}"
 
 # ---------------------------------------------------------------------
 openBrowser = (url) ->
