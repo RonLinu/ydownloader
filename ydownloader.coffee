@@ -1,6 +1,6 @@
 
 # ********************** WEBSOCKET HANDLER ****************************
-socketHandler = ->
+serverHandler = ->
     switch location.hash
         when '#BUSY'
             document.body.innerHTML = 'WebSocket already in use'
@@ -13,8 +13,9 @@ socketHandler = ->
     os   = location.hash.split(',')[1]
     port = location.hash.split(',')[2]
 
-    if parseInt('0' + port) not in [8080..8089] or os not in ['win32','linux','darwin']
+    if parseInt('0' + port) not in [1024..49151] or os not in ['win32','linux','darwin']
         document.body.innerHTML = 'This web application must be started by the WebSocket server.'
+        console.log os, port
         throw new Error document.body.innerHTML
 
     socket = new WebSocket "ws://localhost:#{port}/ws"
@@ -24,38 +25,51 @@ socketHandler = ->
 
     socket.onclose = (event) ->
         console.log 'WebSocket connection closed'
-        document.body.innerHTML = 'Application closed.'
+        document.body.innerHTML = 'WebsScoket connection closed'
 
     socket.onmessage = (event) ->
-        # Received messages from server
         serverReply = event.data.trim()
 
-    send = ( action, command ) ->
+    # ----------------------------------
+    exec = ( command, timeout=5000 ) ->
         serverReply = ''
         cmd = JSON.stringify
-            id: location.hash
-            action: action
+            action: 'exec'
             cmd: command
+            timeout: timeout
         socket.send cmd
 
-    receive = -> serverReply
+    js = ( command, timeout=5000 ) ->
+        serverReply = ''
+        cmd = JSON.stringify
+            action: 'js'
+            cmd: command
+            timeout: timeout
+        socket.send cmd
 
-    quit = -> send 'quit', ''
+    coffee = ( func, timeout=5000 ) ->
+        todo  = func.toString()
+        # Remove function header and last closing brace
+        arr = todo.split('\n').slice(1,-1)
+
+        # Remove last 'return'
+        [..., last] = arr
+        newLast = last.replace('return', '')
+        arr[arr.length - 1] = newLast        
+        command = arr.join('\n')
+        js( command,timeout )
+    
+    message  = -> serverReply
 
     platform = -> os
-        
-    { send, receive, quit, platform }
+    
+    { exec, js, coffee, message, platform }
 
 # Start socket handler as a closure
-socket = socketHandler()
+server = serverHandler()
 
 # ******************* END OF WEBSOCKET HANDLER ************************
 
-window.addEventListener 'beforeunload', (event) ->
-    # Terminate the external socket server program
-    socket.quit()
-
-# --------------------------------------
 window.onload = ->
     # Focus on video URL field when page is loaded
     document.getElementById('videoUrl').focus()
@@ -198,7 +212,7 @@ askConfirm = (title, icon, msg, textalign='center') ->
 
 # --------------------------------------
 getVideoFolder = ->
-    switch socket.platform()
+    switch server.platform()
         when 'win32' then '%USERPROFILE%\\Videos'
         when 'linux' then '$HOME/Videos'
         when 'darwin' then '$HOME/Movies'
@@ -208,7 +222,7 @@ getVideoFolder = ->
 document.getElementById('openfolder').onclick = ->
     videoFolder = getVideoFolder()
 
-    cmd = switch socket.platform()
+    cmd = switch server.platform()
         when 'win32'
             """explorer "#{videoFolder}" """
         when 'linux'
@@ -219,9 +233,10 @@ document.getElementById('openfolder').onclick = ->
     msg = 'If you don’t see the video folder showing up,<br>'
     msg += 'look behind the browser window or in the task bar.<br>'
     msg += '<br><i>click Ok to open the folder</i>'
-    await showAlert('', '', msg)
 
-    socket.send('run', cmd)
+    answer = await showAlert('Notice', '', msg)
+    if answer.isConfirmed
+        server.exec(cmd)
 
 # --------------------------------------------------------------------
 # 'About' button click
@@ -231,9 +246,22 @@ document.getElementById('about').onclick = ->
         Using CoffeeScript 2.7<br><br>
         \u00A9 2025 - RonLinu
         '''
-
     showAlert('', '', msg)
-
+    
+    #~ todo = ->
+        #~ 'This is a test<br>' + 
+        #~ 'to execute CoffeeScript code directly on the server<br>' +
+        #~ 'and using the capability of Node.js'
+                
+    #~ readit = ->
+        #~ if not server.message()
+            #~ setTimeout readit, 250
+            #~ return
+        #~ showAlert('', '', server.message())
+  
+    #~ server.coffee(todo)
+    #~ setTimeout readit, 250
+    
 # --------------------------------------------------------------------
 # 'Check dependencies' button click
 document.getElementById('dependencies').onclick = ->
@@ -241,34 +269,34 @@ document.getElementById('dependencies').onclick = ->
 
     gather_results = (name, result) ->
         results += "<b>#{name}&nbsp;</b><span style='color: "
-
-        if result.indexOf('is not') > -1 or result.indexOf('not found') > -1
+        if /is not|not found|#TIMEOUT/i.test result
             results += "red;'>&#x2718;</span><br>"
         else
             results += "green;'>&#x2714;</span><br>"
 
     check_ytdlp = ->
-        if not socket.receive()
+        if not server.message()
             setTimeout check_ytdlp, 250
             return
-        gather_results 'yt-dlp', socket.receive()
-        socket.send('run', 'ffmpeg -version')
+            
+        gather_results 'yt-dlp', server.message()
+        server.exec('ffmpeg -version')
         setTimeout check_ffmpeg, 250
 
     check_ffmpeg = ->
-        if not socket.receive()
+        if not server.message()
             setTimeout check_ffmpeg, 250
             return
-        gather_results 'ffmpeg', socket.receive()
-        socket.send('run', 'xterm -version')
+        gather_results 'ffmpeg', server.message()
+        server.exec('xterm -version')
         setTimeout check_xterm, 250
 
     check_xterm = ->
-        if socket.platform() is 'linux'
-            if not socket.receive()
+        if server.platform() is 'linux'
+            if not server.message()
                 setTimeout check_xterm, 250
                 return
-            gather_results 'xterm ', socket.receive()
+            gather_results 'xterm ', server.message()
 
         Swal.close()
         showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
@@ -283,26 +311,18 @@ document.getElementById('dependencies').onclick = ->
         Swal.showLoading()
 
     # Start the sequence of tests, one dependency at a time
-    socket.send('run', 'yt-dlp --version')
+    server.exec('yt-dlp --version')
     setTimeout check_ytdlp, 250
 
 # --------------------------------------------------------------------
 # 'Help' button click
 document.getElementById('help').onclick = ->
     msg = window.HELP
-    if socket.platform() is 'linux'
+    if server.platform() is 'linux'
         # Add Linux 'xterm' to the list of dependencies
         msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>')
 
     showAlert('Help', '', msg, 'left')
-
-# --------------------------------------------------------------------
-#~ # 'Quit' button click
-#~ document.getElementById('quit').onclick = ->
-    #~ result = await askConfirm('', 'question', 'Quit the application?')
-
-    #~ if result.isConfirmed
-        #~ socket.quit()
 
 # --------------------------------------
 # 'Download' button click
@@ -371,7 +391,7 @@ document.getElementById('download').onclick = ->
          '--buffer-size 16M ' +
          '"' + url + '"'
 
-    final_cmd = switch socket.platform()
+    final_cmd = switch server.platform()
         when 'win32'
             """cmd /c start "" cmd /k #{ytdlp_cmd} """
         when 'linux'
@@ -379,4 +399,4 @@ document.getElementById('download').onclick = ->
         when 'darwin'
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
 
-    socket.send('run', final_cmd)
+    server.exec(final_cmd, 0)    # 0=no timeout to download videos
