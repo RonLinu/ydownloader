@@ -2,7 +2,6 @@
 webpage    = process.argv[2]
 socketport = process.argv[3]
 
-fragmentId = ''         # url fragment identifier
 timeout    = true       # delay for client to respond
 activeClient = null     # only one client accepted at a time
 
@@ -24,18 +23,18 @@ wss._server.on 'listening', ->
     setTimeout shutdown, 10000
 
     # Launch client (browser)
-    fragmentId = '#' + randomHex() + ',' + process.platform + ',' + socketport
-    launchBrowser( fragmentId )
+    fragment = '#,' + process.platform + ',' + socketport
+    launchBrowser( webpage, fragment )
 
 # --------------------------------------
 wss.on 'error', (err) ->
     if err.code is 'EADDRINUSE'
         console.error 'Port', socketport, 'is already in use'
-        launchBrowser('#BUSY')
+        launchBrowser(webpage, '#BUSY')
     else
         firstline = err.message.split('\n')[0]
         console.error 'WebSocket server error:', firstline
-        launchBrowser('#ERROR')
+        launchBrowser(webpage, '#ERROR')
 
 # --------------------------------------
 # When client connects
@@ -51,34 +50,28 @@ wss.on 'connection', (ws) ->
 
     # When the client disconnects
     ws.on 'close', () ->
-        activeClient = null
         console.log 'Client disconnected'
-        process.exit 0
-
-    ws.on 'error', () ->
-        activeClient = null
-        console.log 'Client disconnected from error'
         process.exit 0
 
    # When server receives a command from client
     ws.on 'message', (message) ->
-        values = JSON.parse(message)
+        command = JSON.parse(message)
 
-        # Reject any command without correct fragment identifier
-        if values.id isnt fragmentId
-            console.error 'Incorrect fragment identifier received'
-            return
-
-        switch values.action
-            when 'quit'
-                console.log 'Client disconnected on request'
-                ws.close()
-                process.exit 0
-            when 'run'
-                console.log 'Server received:', values.cmd
-                exec values.cmd, (error, stdout, stderr) ->
-                    ws.send "#{stdout} ~~~ #{stderr} ~~~ #{error}"
-
+        console.log 'Server received:', command.cmd
+        switch command.action
+            when 'exec'
+                exec command.cmd,  { timeout: command.timeout }, (error, stdout, stderr) ->
+                    timeoutFlag = ''
+                    if error and error.killed then timeoutFlag = '#TIMEOUT'
+                    ws.send "#{stdout} ~~~ #{stderr} ~~~ #{error} ~~~ #{timeoutFlag}"
+            when 'js'
+                console.log command.cmd
+                try
+                    result = eval command.cmd
+                catch
+                    result = '#ERROR: JavaScript evaluation failed'
+                ws.send result
+                            
 # ---------------------------------------------------------------------
 openBrowser = (url) ->
     switch process.platform
@@ -92,16 +85,10 @@ openBrowser = (url) ->
             console.error 'Unsupported operating system'
             process.exit 1
 
-# ----------------------------
-randomHex = ->
-  Math.floor(Math.random() * 0xFFFFFFFF)  # random 32-bit integer
-    .toString(16)                         # convert to hex
-    .padStart(8, '0')                     # ensure 8 characters
-
 # --------------------------------------
-launchBrowser = (fragmentId) ->
+launchBrowser = (webpage, fragment) ->
     console.log 'Launching default browser at', webpage
-    openBrowser webpage + fragmentId
+    openBrowser webpage + fragment
 
 # --------------------------------------
 shutdown = ->
