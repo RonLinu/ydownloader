@@ -21,13 +21,20 @@ INSTALLATION OF THE WEBSOCKET SERVER:
 
 - Node.js must be installed on your system (if not already installed)
 - copy the "websocket" directory provided in this repo on the user machine
-- install yt-dlp and ffmepg utilities on the user machine, ensure they are in your PATH
-- Linux only: ensure xterm terminal is installed
+- Linux only: ensure xterm terminal is installed, available in any repositories
 
-On Linux, yt-dlp and ffmpeg should be available in repositories.  
-On Windows, you have to download them for their respective websites.
+Download 'yt-dlp' latest version at: https://github.com/yt-dlp/yt-dlp/releases  
+This is a single executable.
 
-To run the web application, go in the 'websocket' directory:
+Download 'ffmpeg' latest version at: https://github.com/BtbN/FFmpeg-Builds/releases  
+This is an archive file (zip or tar-xz)
+Just extract the files contained in the 'bin' directory of the zip file.
+
+Copy all these files into your 'websocket' directory.
+
+Add your 'websocket' directory to your PATH.
+
+To run the web application, go in your 'websocket' directory:
 <pre>
 On Windows:       start with 'ydownloader.vbs'
 On Linux/MacOS:   start with 'ydownloader.sh'
