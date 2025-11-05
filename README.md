@@ -27,7 +27,7 @@ Download 'yt-dlp' latest version at: https://github.com/yt-dlp/yt-dlp/releases
 This is a single executable.
 
 Download 'ffmpeg' latest version at: https://github.com/BtbN/FFmpeg-Builds/releases  
-This is an archive file (zip or tar-xz)
+This is an archive file (zip or tar-xz).  
 Just extract the files contained in the 'bin' directory of the zip file.
 
 Copy all these files into your 'websocket' directory.
