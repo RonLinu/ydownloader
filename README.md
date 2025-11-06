@@ -21,24 +21,28 @@ Trying to open the web page using a bookmark, a link, pasting or typing the url 
 -------------------------------------
 INSTALLATION OF THE WEBSOCKET SERVER:
 
-- Node.js must be installed (if not already installed)
-- copy the "websocket" directory provided in this repo
-- Linux only: ensure xterm terminal is installed, available in any repositories
+Assuming Node.js, yt-dlp and ffmpeg are already installed and included in your PATH.  
+On Linux, xterm terminal must be installed.
 
-Download 'yt-dlp' latest version at: https://github.com/yt-dlp/yt-dlp/releases  
+Just copy the "websocket" directory provided in this repo.
+
+To run the web application, go in your 'websocket' directory:  
+<pre>
+On Windows:       start with 'ydownloader.vbs'
+On Linux/MacOS:   start with 'ydownloader.sh'
+</pre>
+
+-----------------------------------------------
+If Node.js, yt-dlp and ffmpeg are NOT installed.
+
+Download 'Node.js' latest version at: https://nodejs.org/en/download  
+This is an archive file for Linux/MacOS or an msi file for Windows.
+
+Download 'yt-dlp' latest version at: https://github.com/yt-dlp/yt-dlp/releases   
 This is a single executable.
 
 Download 'ffmpeg' latest version at: https://github.com/BtbN/FFmpeg-Builds/releases  
 This is an archive file (zip or tar-xz).  
 Just extract the files contained in the 'bin' directory of the zip file.
 
-Copy all these files into your 'websocket' directory.
-
-Add your 'websocket' directory to your PATH.
-
-To run the web application, go in your 'websocket' directory:
-<pre>
-On Windows:       start with 'ydownloader.vbs'
-On Linux/MacOS:   start with 'ydownloader.sh'
-</pre>
-The WebSocket server will automatically launch the web application using your default browser.
+Copy ALL yt-dlp and ffmepg files in a directory of your choice and add it to your PATH.
