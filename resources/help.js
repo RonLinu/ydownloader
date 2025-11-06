@@ -1,11 +1,9 @@
 window.HELP = `
-To download a video, just paste its URL (ex: copied from a browser address bar) and click the 'Download' button.
+To download a video, paste its URL in the 'Video URL' field and click the 'Download' button.
+A terminal window will open showing the download progress.
 <br><br>
-The following dependencies must be installed on your system and
-in your PATH to be able to download videos:
-<pre>
-- <b>yt-dlp</b> video download utility</b>
-- <b>ffmpeg</b> video conversion utility</b>
-</pre>
-To verify this, click 'Check dependencies' button.
+In case of download error, try 'Resolution cap' = <b>No cap</b>.
+<br><br>
+Note that <i>yt-dlp</i> may not be able to download some videos due
+to proprietary video formats or web site restrictions.
 `

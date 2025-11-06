@@ -1,21 +1,21 @@
 
-# ********************** WEBSOCKET HANDLER ****************************
+# ******************* WEBSOCKET SERVER HANDLER ************************
 serverHandler = ->
     switch location.hash
         when '#BUSY'
-            document.body.innerHTML = 'WebSocket already in use'
-            throw new Error document.body.innerHTML
+            document.body.innerHTML = 'The application is already in use'
+            throw new Error 'WebScoket already in use'
         when '#ERROR'
             document.body.innerHTML = 'WebSocket connection error'
-            throw new Error document.body.innerHTML
+            throw new Error 'WebSocket connection error'
 
     serverReply = ''
     os   = location.hash.split(',')[1]
     port = location.hash.split(',')[2]
 
     if parseInt('0' + port) not in [1024..49151] or os not in ['win32','linux','darwin']
-        document.body.innerHTML = 'This web application must be started by the WebSocket server.'
-        console.log os, port
+        document.body.innerHTML = 'This application must be started by the WebSocket server.'
+        console.log "Incorrect parameters", os, port
         throw new Error document.body.innerHTML
 
     socket = new WebSocket "ws://localhost:#{port}/ws"
@@ -57,7 +57,7 @@ serverHandler = ->
         newLast = last.replace('return', '')
         arr[arr.length - 1] = newLast        
         command = arr.join('\n')
-        js( command,timeout )
+        js( command, timeout )
     
     message  = -> serverReply
 
@@ -65,10 +65,10 @@ serverHandler = ->
     
     { exec, js, coffee, message, platform }
 
-# Start socket handler as a closure
+# --- Start handler as a closure ---
 server = serverHandler()
 
-# ******************* END OF WEBSOCKET HANDLER ************************
+# ********************* END OF SERVER HANDLER *************************
 
 window.onload = ->
     # Focus on video URL field when page is loaded
@@ -230,7 +230,7 @@ document.getElementById('openfolder').onclick = ->
         when 'darwin'
             """open "#{videoFolder}" """
 
-    msg = 'If you don’t see the video folder showing up,<br>'
+    msg = 'If the video folder does not appear,<br>'
     msg += 'look behind the browser window or in the task bar.<br>'
     msg += '<br><i>click Ok to open the folder</i>'
 
@@ -242,26 +242,17 @@ document.getElementById('openfolder').onclick = ->
 # 'About' button click
 document.getElementById('about').onclick = ->
     msg = '''
-        YDownloader 0.9<br><br>
-        Using CoffeeScript 2.7<br><br>
+        A web interface for <i>yt-dlp</i> video download utility
+        <br><br>
         \u00A9 2025 - RonLinu
         '''
-    showAlert('', '', msg)
+    showAlert('YDownloader 0.9', '', msg)
     
-    #~ todo = ->
-        #~ 'This is a test<br>' + 
-        #~ 'to execute CoffeeScript code directly on the server<br>' +
-        #~ 'and using the capability of Node.js'
-                
-    #~ readit = ->
-        #~ if not server.message()
-            #~ setTimeout readit, 250
-            #~ return
-        #~ showAlert('', '', server.message())
-  
-    #~ server.coffee(todo)
-    #~ setTimeout readit, 250
-    
+    src = """
+        "Hello, world!" + " and again"
+    """
+    server.coffee(src)
+           
 # --------------------------------------------------------------------
 # 'Check dependencies' button click
 document.getElementById('dependencies').onclick = ->
@@ -278,7 +269,6 @@ document.getElementById('dependencies').onclick = ->
         if not server.message()
             setTimeout check_ytdlp, 250
             return
-            
         gather_results 'yt-dlp', server.message()
         server.exec('ffmpeg -version')
         setTimeout check_ffmpeg, 250
@@ -299,7 +289,8 @@ document.getElementById('dependencies').onclick = ->
             gather_results 'xterm ', server.message()
 
         Swal.close()
-        showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
+        msg = "<pre>#{results}</pre>"
+        showAlert 'Status of dependencies', '', msg
 
     # Show a wait dialog
     Swal.fire
@@ -399,4 +390,4 @@ document.getElementById('download').onclick = ->
         when 'darwin'
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
 
-    server.exec(final_cmd, 0)    # 0=no timeout to download videos
+    server.exec(final_cmd, 0)    # 0 = no timeout to download videos
