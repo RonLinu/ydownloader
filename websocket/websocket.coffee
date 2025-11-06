@@ -2,7 +2,7 @@
 webpage    = process.argv[2]
 socketport = process.argv[3]
 
-timeout    = true       # delay for client to respond
+timeout      = true     # flag a delay for client to respond
 activeClient = null     # only one client accepted at a time
 
 if socketport is '' or webpage is ''
@@ -56,20 +56,21 @@ wss.on 'connection', (ws) ->
    # When server receives a command from client
     ws.on 'message', (message) ->
         command = JSON.parse(message)
-
         console.log 'Server received:', command.cmd
+        
         switch command.action
             when 'exec'
+                # Execute native system command
                 exec command.cmd,  { timeout: command.timeout }, (error, stdout, stderr) ->
                     timeoutFlag = ''
                     if error and error.killed then timeoutFlag = '#TIMEOUT'
                     ws.send "#{stdout} ~~~ #{stderr} ~~~ #{error} ~~~ #{timeoutFlag}"
             when 'js'
-                console.log command.cmd
+                # Execute pure JavaScript code with Node.js capabilities
                 try
                     result = eval command.cmd
                 catch
-                    result = '#ERROR: JavaScript evaluation failed'
+                    result = '#ERROR'
                 ws.send result
                             
 # ---------------------------------------------------------------------

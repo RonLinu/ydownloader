@@ -5,7 +5,7 @@ webpage = process.argv[2];
 
 socketport = process.argv[3];
 
-timeout = true; // delay for client to respond
+timeout = true; // flag a delay for client to respond
 
 activeClient = null; // only one client accepted at a time
 
@@ -70,6 +70,7 @@ wss.on('connection', function(ws) {
     console.log('Server received:', command.cmd);
     switch (command.action) {
       case 'exec':
+        // Execute native system command
         return exec(command.cmd, {
           timeout: command.timeout
         }, function(error, stdout, stderr) {
@@ -81,11 +82,11 @@ wss.on('connection', function(ws) {
           return ws.send(`${stdout} ~~~ ${stderr} ~~~ ${error} ~~~ ${timeoutFlag}`);
         });
       case 'js':
-        console.log(command.cmd);
         try {
+          // Execute pure JavaScript code with Node.js capabilities
           result = eval(command.cmd);
         } catch (error1) {
-          result = '#ERROR: JavaScript evaluation failed';
+          result = '#ERROR';
         }
         return ws.send(result);
     }
