@@ -27,10 +27,9 @@ serverHandler = ->
         console.log 'WebSocket connection closed'
         document.body.innerHTML = 'WebsScoket connection closed'
 
-    socket.onmessage = (event) ->
-        serverReply = event.data.trim()
-
     # ----------------------------------
+    platform = -> os
+
     exec = ( command, timeout=5000 ) ->
         serverReply = ''
         cmd = JSON.stringify
@@ -48,22 +47,21 @@ serverHandler = ->
         socket.send cmd
 
     coffee = ( func, timeout=5000 ) ->
-        todo  = func.toString()
-        # Remove function header and last closing brace
-        arr = todo.split('\n').slice(1,-1)
-
-        # Remove last 'return'
-        [..., last] = arr
-        newLast = last.replace('return', '')
-        arr[arr.length - 1] = newLast        
-        command = arr.join('\n')
+        code  = func.toString()
+        command = "(#{code})();"
         js( command, timeout )
-    
-    message  = -> serverReply
 
-    platform = -> os
-    
-    { exec, js, coffee, message, platform }
+    reply = (timeout=5000) ->
+      new Promise (resolve) ->
+        socket.onmessage = (event) ->
+            resolve event.data.trim()
+
+        # Timeout in milliseconds
+        setTimeout ->
+            resolve '#TIMEOUT'
+        , timeout
+
+    { platform, exec, js, coffee, reply }
 
 # --- Start handler as a closure ---
 server = serverHandler()
@@ -234,9 +232,8 @@ document.getElementById('openfolder').onclick = ->
     msg += 'look behind the browser window or in the task bar.<br>'
     msg += '<br><i>click Ok to open the folder</i>'
 
-    answer = await showAlert('Notice', '', msg)
-    if answer.isConfirmed
-        server.exec(cmd)
+    await showAlert('Notice', '', msg)
+    server.exec(cmd)
 
 # --------------------------------------------------------------------
 # 'About' button click
@@ -246,53 +243,23 @@ document.getElementById('about').onclick = ->
         <br><br>
         \u00A9 2025 - RonLinu
         '''
-    showAlert('YDownloader 0.9', '', msg)
-    
-    src = """
-        "Hello, world!" + " and again"
-    """
-    server.coffee(src)
-           
+    await showAlert('YDownloader 0.9', '', msg)
+        
 # --------------------------------------------------------------------
 # 'Check dependencies' button click
 document.getElementById('dependencies').onclick = ->
     results = ''
-
+    failCross = '&#x2718;'
+    goodCheck = '&#x2714;'
+    
     gather_results = (name, result) ->
         results += "<b>#{name}&nbsp;</b><span style='color: "
         if /is not|not found|#TIMEOUT/i.test result
-            results += "red;'>&#x2718;</span><br>"
+            results += "red;'>#{failCross}</span><br>"
         else
-            results += "green;'>&#x2714;</span><br>"
+            results += "green;'>#{goodCheck}</span><br>"
 
-    check_ytdlp = ->
-        if not server.message()
-            setTimeout check_ytdlp, 250
-            return
-        gather_results 'yt-dlp', server.message()
-        server.exec('ffmpeg -version')
-        setTimeout check_ffmpeg, 250
-
-    check_ffmpeg = ->
-        if not server.message()
-            setTimeout check_ffmpeg, 250
-            return
-        gather_results 'ffmpeg', server.message()
-        server.exec('xterm -version')
-        setTimeout check_xterm, 250
-
-    check_xterm = ->
-        if server.platform() is 'linux'
-            if not server.message()
-                setTimeout check_xterm, 250
-                return
-            gather_results 'xterm ', server.message()
-
-        Swal.close()
-        msg = "<pre>#{results}</pre>"
-        showAlert 'Status of dependencies', '', msg
-
-    # Show a wait dialog
+    # Show a wait dialog with a progress animation
     Swal.fire
       title: 'Please wait'
       text: 'Checking is in progress...'
@@ -301,9 +268,29 @@ document.getElementById('dependencies').onclick = ->
       didOpen: () ->
         Swal.showLoading()
 
-    # Start the sequence of tests, one dependency at a time
+    # Start sequence of tests, one dependency at a time
     server.exec('yt-dlp --version')
-    setTimeout check_ytdlp, 250
+    result = await server.reply()
+    gather_results 'yt-dlp', result
+
+    server.exec('ffmpeg -version')
+    result = await server.reply()
+    gather_results 'ffmpeg', result
+
+    if server.platform() is 'linux'
+        server.exec('xterm -version')
+        result = await server.reply()
+        gather_results 'xterm ', result
+
+    if results.indexOf(failCross) == -1
+        results += '\nAll good!'
+    else
+        missing = results.split(failCross).length - 1
+        plural  = if missing > 1 then 'dependencies are' else 'dependency is'
+        results += "\n #{missing} #{plural} missing!"
+        
+    Swal.close()
+    showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
 
 # --------------------------------------------------------------------
 # 'Help' button click
