@@ -1,6 +1,7 @@
 
 webpage    = process.argv[2]
 socketport = process.argv[3]
+data = null
 
 timeout      = true     # flag a delay for client to respond
 activeClient = null     # only one client accepted at a time
@@ -40,7 +41,7 @@ wss.on 'error', (err) ->
 # When client connects
 wss.on 'connection', (ws) ->
     if activeClient
-        ws.close(1000, 'Only one client allowed at a time');
+        ws.close(1000, 'Only one client allowed at a time')  # 1000=nomal close
         return
 
     activeClient = ws
@@ -56,7 +57,7 @@ wss.on 'connection', (ws) ->
    # When server receives a command from client
     ws.on 'message', (message) ->
         command = JSON.parse(message)
-        console.log 'Server received:', command.cmd
+        #~ console.log 'Server received:', command.cmd
         
         switch command.action
             when 'exec'
@@ -65,8 +66,11 @@ wss.on 'connection', (ws) ->
                     timeoutFlag = ''
                     if error and error.killed then timeoutFlag = '#TIMEOUT'
                     ws.send "#{stdout} ~~~ #{stderr} ~~~ #{error} ~~~ #{timeoutFlag}"
-            when 'js'
-                # Execute pure JavaScript code with Node.js capabilities
+            when 'send'
+                data = command.cmd
+            when 'script'
+                # Execute JavaScript code under Node.js
+                console.log command.cmd
                 try
                     result = eval command.cmd
                 catch
