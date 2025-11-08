@@ -1,72 +1,5 @@
 
-# ******************* WEBSOCKET SERVER HANDLER ************************
-serverHandler = ->
-    switch location.hash
-        when '#BUSY'
-            document.body.innerHTML = 'The application is already in use'
-            throw new Error 'WebScoket already in use'
-        when '#ERROR'
-            document.body.innerHTML = 'WebSocket connection error'
-            throw new Error 'WebSocket connection error'
-
-    serverReply = ''
-    os   = location.hash.split(',')[1]
-    port = location.hash.split(',')[2]
-
-    if parseInt('0' + port) not in [1024..49151] or os not in ['win32','linux','darwin']
-        document.body.innerHTML = 'This application must be started by the WebSocket server.'
-        console.log "Incorrect parameters", os, port
-        throw new Error document.body.innerHTML
-
-    socket = new WebSocket "ws://localhost:#{port}/ws"
-
-    socket.onopen = (event) ->
-        console.log 'WebSocket connection established'
-
-    socket.onclose = (event) ->
-        console.log 'WebSocket connection closed'
-        document.body.innerHTML = 'WebsScoket connection closed'
-
-    # ----------------------------------
-    platform = -> os
-
-    exec = ( command, timeout=5000 ) ->
-        serverReply = ''
-        cmd = JSON.stringify
-            action: 'exec'
-            cmd: command
-            timeout: timeout
-        socket.send cmd
-
-    js = ( command, timeout=5000 ) ->
-        serverReply = ''
-        cmd = JSON.stringify
-            action: 'js'
-            cmd: command
-            timeout: timeout
-        socket.send cmd
-
-    coffee = ( func, timeout=5000 ) ->
-        code  = func.toString()
-        command = "(#{code})();"
-        js( command, timeout )
-
-    reply = (timeout=5000) ->
-      new Promise (resolve) ->
-        socket.onmessage = (event) ->
-            resolve event.data.trim()
-
-        # Timeout in milliseconds
-        setTimeout ->
-            resolve '#TIMEOUT'
-        , timeout
-
-    { platform, exec, js, coffee, reply }
-
-# --- Start handler as a closure ---
-server = serverHandler()
-
-# ********************* END OF SERVER HANDLER *************************
+socket = socketClient()    # start communication with socket server
 
 window.onload = ->
     # Focus on video URL field when page is loaded
@@ -210,7 +143,7 @@ askConfirm = (title, icon, msg, textalign='center') ->
 
 # --------------------------------------
 getVideoFolder = ->
-    switch server.platform()
+    switch socket.platform()
         when 'win32' then '%USERPROFILE%\\Videos'
         when 'linux' then '$HOME/Videos'
         when 'darwin' then '$HOME/Movies'
@@ -220,7 +153,7 @@ getVideoFolder = ->
 document.getElementById('openfolder').onclick = ->
     videoFolder = getVideoFolder()
 
-    cmd = switch server.platform()
+    cmd = switch socket.platform()
         when 'win32'
             """explorer "#{videoFolder}" """
         when 'linux'
@@ -232,8 +165,10 @@ document.getElementById('openfolder').onclick = ->
     msg += 'look behind the browser window or in the task bar.<br>'
     msg += '<br><i>click Ok to open the folder</i>'
 
-    await showAlert('Notice', '', msg)
-    server.exec(cmd)
+    answer = await showAlert('Notice', '', msg)
+
+    if answer.isConfirmed
+        socket.exec(cmd)
 
 # --------------------------------------------------------------------
 # 'About' button click
@@ -243,15 +178,15 @@ document.getElementById('about').onclick = ->
         <br><br>
         \u00A9 2025 - RonLinu
         '''
-    await showAlert('YDownloader 0.9', '', msg)
-        
+    await showAlert('YDownloader 1.0', '', msg)
+
 # --------------------------------------------------------------------
 # 'Check dependencies' button click
 document.getElementById('dependencies').onclick = ->
     results = ''
     failCross = '&#x2718;'
     goodCheck = '&#x2714;'
-    
+
     gather_results = (name, result) ->
         results += "<b>#{name}&nbsp;</b><span style='color: "
         if /is not|not found|#TIMEOUT/i.test result
@@ -269,26 +204,26 @@ document.getElementById('dependencies').onclick = ->
         Swal.showLoading()
 
     # Start sequence of tests, one dependency at a time
-    server.exec('yt-dlp --version')
-    result = await server.reply()
+    socket.exec('yt-dlp --version')
+    result = await socket.read()
     gather_results 'yt-dlp', result
 
-    server.exec('ffmpeg -version')
-    result = await server.reply()
+    socket.exec('ffmpeg -version')
+    result = await socket.read()
     gather_results 'ffmpeg', result
 
-    if server.platform() is 'linux'
-        server.exec('xterm -version')
-        result = await server.reply()
+    if socket.platform() is 'linux'
+        socket.exec('xterm -version')
+        result = await socket.read()
         gather_results 'xterm ', result
 
     if results.indexOf(failCross) == -1
         results += '\nAll good!'
     else
-        missing = results.split(failCross).length - 1
-        plural  = if missing > 1 then 'dependencies are' else 'dependency is'
-        results += "\n #{missing} #{plural} missing!"
-        
+        howmany = results.split(failCross).length - 1
+        plural  = if howmany > 1 then 'dependencies are' else 'dependency is'
+        results += "\n #{howmany} #{plural} missing!"
+
     Swal.close()
     showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
 
@@ -296,7 +231,7 @@ document.getElementById('dependencies').onclick = ->
 # 'Help' button click
 document.getElementById('help').onclick = ->
     msg = window.HELP
-    if server.platform() is 'linux'
+    if socket.platform() is 'linux'
         # Add Linux 'xterm' to the list of dependencies
         msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>')
 
@@ -356,12 +291,10 @@ document.getElementById('download').onclick = ->
             subtitles = abbreviations.join(",")
             option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs '
 
-    videoFolder = getVideoFolder()
-
     ytdlp_cmd = 'yt-dlp ' +
          '--concurrent-fragments 2 ' +
          '--no-warnings ' +
-         '-P "' + videoFolder + '" ' +
+         '-P "' + getVideoFolder() + '" ' +
          option_resolution +
          option_subtitles +
          option_merging +
@@ -369,7 +302,7 @@ document.getElementById('download').onclick = ->
          '--buffer-size 16M ' +
          '"' + url + '"'
 
-    final_cmd = switch server.platform()
+    final_cmd = switch socket.platform()
         when 'win32'
             """cmd /c start "" cmd /k #{ytdlp_cmd} """
         when 'linux'
@@ -377,4 +310,4 @@ document.getElementById('download').onclick = ->
         when 'darwin'
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
 
-    server.exec(final_cmd, 0)    # 0 = no timeout to download videos
+    socket.exec(final_cmd, 0)    # 0 = no timeout to download videos
