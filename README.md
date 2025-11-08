@@ -1,11 +1,10 @@
 
-Experimental web application to download videos using the well known download utilities:  
-- yt-dlp
-- ffmepg
+Experimental web application to download videos using the video download utility: yt-dlp  
+and its companion utility for video conversion: ffmepg
 
-Goal: create a web interface using a WebSocket server instead of a packager like Electron to run  
-JavaScript code with access to the operating system.  
-The application would have very low disk usage, about 170K bytes on the user computer (excluding Node.js).
+Goal: to create a web interface using a WebSocket server instead of a packager like Electron to run  
+JavaScript code with system level access.  
+The application has a very low disk usage, about 170K bytes, on the user computer (excluding Node.js).
 
 The web page itself is hosted on GitHub. Only the WebSocket server is needed on the user computer.
 
@@ -21,7 +20,7 @@ Trying to open the web page using a bookmark, a link, pasting or typing the url 
 -------------------------------------
 INSTALLATION OF THE WEBSOCKET SERVER:
 
-Assuming Node.js, yt-dlp and ffmpeg are already installed and included in your PATH.  
+Assuming Node.js, yt-dlp and ffmpeg are already installed and included in the PATH.  
 On Linux, xterm terminal must be installed.
 
 Just copy the "websocket" directory provided in this repo.
