@@ -9,7 +9,7 @@ window.serverCopy = `
   */
   var VERSION, WebSocket, activeClient, data, exec, launchBrowser, openBrowser, shutdown, socketport, timeout, webpage, wss;
 
-  VERSION = '#1.1';
+  VERSION = '#1.0';
 
   webpage = process.argv[2];
 
