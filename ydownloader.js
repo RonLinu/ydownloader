@@ -66,7 +66,32 @@
 
   resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'];
 
-  (function() {    // *********************************************************************
+  // *********************************************************************
+  showAlert = function(title, icon, msg, textalign = 'center') {
+    return Swal.fire({
+      title: title,
+      html: `<div style='text-align: ${textalign}; font-size: 16px;'>${msg}</div>`,
+      icon: icon,
+      confirmButtonText: 'OK',
+      allowOutsideClick: false
+    });
+  };
+
+  // --------------------------------------
+  askConfirm = function(title, icon, msg, textalign = 'center') {
+    return Swal.fire({
+      title: title,
+      html: `<div style='text-align: ${textalign}; font-size: 16px;'>${msg}</div>`,
+      icon: icon,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      focusCancel: true,
+      allowOutsideClick: false
+    });
+  };
+
+  (function() {    // --------------------------------------
     var checkbox, container, label, language, results1;
     // Create checkbox panel with all supported languages
     container = document.querySelector('.checkbox-grid');
@@ -123,30 +148,26 @@
     return results1;
   })();
 
-  // --------------------------------------
-  showAlert = function(title, icon, msg, textalign = 'center') {
-    return Swal.fire({
-      title: title,
-      html: `<div style='text-align: ${textalign}; font-size: 16px;'>${msg}</div>`,
-      icon: icon,
-      confirmButtonText: 'OK',
-      allowOutsideClick: false
-    });
-  };
-
-  // --------------------------------------
-  askConfirm = function(title, icon, msg, textalign = 'center') {
-    return Swal.fire({
-      title: title,
-      html: `<div style='text-align: ${textalign}; font-size: 16px;'>${msg}</div>`,
-      icon: icon,
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No',
-      focusCancel: true,
-      allowOutsideClick: false
-    });
-  };
+  (async function() {    // --------------------------------------
+    var match, msg, reply, result, versionOnFile;
+    // Check if new server version is available INSIDE window.serverCopy variable
+    match = window.serverCopy.match(/#\d+(\.\d+)?/);
+    if (match == null) {
+      return;
+    }
+    versionOnFile = match[0];
+    if (versionOnFile > socket.serversion()) {
+      msg = 'The WebSocket server has an update available.<br><br>';
+      msg += 'Do you want to update now?<br><br>';
+      msg += '<i>The new version we will take effect on the next launch</i>';
+      reply = (await askConfirm('', 'warning', msg));
+      if (reply.isConfirmed) {
+        socket.update(window.serverCopy);
+        result = (await socket.read());
+        return showAlert('Update status', '', result);
+      }
+    }
+  })();
 
   // --------------------------------------
   getVideoFolder = function() {
@@ -186,12 +207,12 @@
 
   // --------------------------------------------------------------------
   // 'About' button click
-  document.getElementById('about').onclick = async function() {
+  document.getElementById('about').onclick = function() {
     var msg;
     msg = `A web interface for <i>yt-dlp</i> video download utility
 <br><br>
 \u00A9 2025 - RonLinu`;
-    return (await showAlert('YDownloader 1.0', '', msg));
+    return showAlert('YDownloader 1.0', '', msg);
   };
 
   // --------------------------------------------------------------------

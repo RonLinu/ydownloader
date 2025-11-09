@@ -66,6 +66,27 @@ resolutions = [
 
 # *********************************************************************
 
+showAlert = (title, icon, msg, textalign='center') ->
+    Swal.fire
+        title: title
+        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
+        icon: icon
+        confirmButtonText: 'OK'
+        allowOutsideClick: false
+
+# --------------------------------------
+askConfirm = (title, icon, msg, textalign='center') ->
+    Swal.fire
+        title: title
+        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
+        icon: icon
+        showCancelButton: true
+        confirmButtonText: 'Yes'
+        cancelButtonText: 'No'
+        focusCancel: true
+        allowOutsideClick: false
+
+# --------------------------------------
 do ->
     # Create checkbox panel with all supported languages
     container = document.querySelector('.checkbox-grid')
@@ -121,25 +142,25 @@ do ->
         container.appendChild(brTag)
 
 # --------------------------------------
-showAlert = (title, icon, msg, textalign='center') ->
-    Swal.fire
-        title: title
-        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
-        icon: icon
-        confirmButtonText: 'OK'
-        allowOutsideClick: false
+do ->
+    # Check if new server version is available INSIDE window.serverCopy variable
+    match = window.serverCopy.match /#\d+(\.\d+)?/
+    if not match?
+        return
 
-# --------------------------------------
-askConfirm = (title, icon, msg, textalign='center') ->
-    Swal.fire
-        title: title
-        html: "<div style='text-align: #{textalign}; font-size: 16px;'>#{msg}</div>"
-        icon: icon
-        showCancelButton: true
-        confirmButtonText: 'Yes'
-        cancelButtonText: 'No'
-        focusCancel: true
-        allowOutsideClick: false
+    versionOnFile = match[0]
+
+    if versionOnFile > socket.serversion()
+        msg = 'The WebSocket server has an update available.<br><br>'
+        msg += 'Do you want to update now?<br><br>'
+        msg += '<i>The new version we will take effect on the next launch</i>'
+
+        reply = await askConfirm('', 'warning', msg)
+
+        if reply.isConfirmed
+            socket.update(window.serverCopy)
+            result = await socket.read()
+            showAlert('Update status', '', result)
 
 # --------------------------------------
 getVideoFolder = ->
@@ -178,7 +199,8 @@ document.getElementById('about').onclick = ->
         <br><br>
         \u00A9 2025 - RonLinu
         '''
-    await showAlert('YDownloader 1.0', '', msg)
+
+    showAlert('YDownloader 1.0', '', msg)
 
 # --------------------------------------------------------------------
 # 'Check dependencies' button click
@@ -311,3 +333,4 @@ document.getElementById('download').onclick = ->
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
 
     socket.exec(final_cmd, 0)    # 0 = no timeout to download videos
+

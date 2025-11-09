@@ -1,33 +1,40 @@
+###
+ This single function is executed on a browser client to handles the socket
+ communication with a socket server running on Node.js.
 
-# This single function handles the socket communication between this 
-# client (browser) and the socket server. 
+ Its main purpose is to execute system commands and scripts with system
+ level access using Node.js.
 
-# Few subfunctions let the client:
-# - send a system command to be executed at server side
-# - send a script code to be executed at server side
-# - assign data to a server variable to be used by the script code (if needed)
-# - read the return data of a system command or a script code execution
-# - return the platform detected at server side, more reliable than client side
+ There are five sub-functions to:
+ - send a system command to be executed at server side
+ - send a script code to be executed at server side
+ - assign data to a server variable to be used by the script code (if needed)
+ - read the return data of a system command or a script code execution
+ - return the platform detected at server side, immune to browser spoofing
+###
 
 window.socketClient = ->
     switch location.hash
         when '#BUSY'
-            document.body.innerHTML = 'The application is already in use'
+            document.body.innerHTML = 'The application is already in use in another tab or browser'
             throw new Error 'WebScoket already in use'
         when '#ERROR'
             document.body.innerHTML = 'WebSocket connection error'
             throw new Error 'WebSocket connection error'
 
-    serverReply = ''
-    os   = location.hash.split(',')[1]
-    port = location.hash.split(',')[2]
+    serverVersion  = location.hash.split(',')[0]
+    serverPlatform = location.hash.split(',')[1]
 
-    if parseInt('0' + port) not in [1024..49151] or os not in ['win32','linux','darwin']
-        document.body.innerHTML = 'This application must be started by the WebSocket server.'
-        console.log "Incorrect parameters", os, port
+    socketPort = location.hash.split(',')[2]
+
+    serverReply = ''
+
+    if parseInt('0' + socketPort) not in [1024..49151] or serverPlatform not in ['win32','linux','darwin']
+        document.body.innerHTML = 'The application MUST be started by the WebSocket server.'
+        console.log "Incorrect parameters", serverPlatform, socketPort
         throw new Error document.body.innerHTML
 
-    socket = new WebSocket "ws://localhost:#{port}/ws"
+    socket = new WebSocket "ws://localhost:#{socketPort}/ws"
 
     socket.onopen = (event) ->
         console.log 'WebSocket connection established'
@@ -38,8 +45,10 @@ window.socketClient = ->
 
     # ----------------------------------
     
-    # Return the operating system detected at the server side
-    platform = -> os
+    # Return the operating system name detected at the server side
+    serversion = -> serverVersion
+    
+    platform = -> serverPlatform
 
     # Send a system command to be executed at server side
     exec = (command, timeout=5000) ->
@@ -69,7 +78,14 @@ window.socketClient = ->
             cmd: data
         socket.send cmd
 
-    # Wait for server to finish with a system command or script execution
+    # Update the WebSocket server script (experimental)
+    update = (data) ->
+        cmd = JSON.stringify
+            action: 'update'
+            cmd: data
+        socket.send cmd
+
+    # Wait for server to finish execution of a system command or script
     # and return any result
     read = (timeout=5000) ->
       new Promise (resolve) ->
@@ -81,4 +97,4 @@ window.socketClient = ->
             resolve '#TIMEOUT'
         , timeout
 
-    { platform, exec, script, send, read }
+    { serversion, platform, update, exec, script, send, read }
