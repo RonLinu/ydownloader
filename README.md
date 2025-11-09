@@ -1,21 +1,24 @@
 
-Experimental web application to download videos using the video download utility: yt-dlp  
-and its companion utility for video conversion: ffmepg
+Experimental web application to download videos using these well known video download utilities:  
+- yt-dlp for video download
+- ffmepg for video format conversion
 
-Goal: to create a web interface using a WebSocket server instead of a packager like Electron to run  
-JavaScript code with system level access.  
-The application has a very low disk usage, about 170K bytes, on the user computer (excluding Node.js).
+My goal is to create a web interface with system level access using a WebSocket server instead  
+of a packager like Electron to run JavaScript code.
 
-The web page itself is hosted on GitHub. Only the WebSocket server is needed on the user computer.
+The web application or interface is hosted on GitHub. Only the WebSocket server is needed on the user computer.  
+The WebSocket server has a very low disk usage, about 175K bytes.
 
-NOTE: it is the WebSocket server that opens the web page by launching the default browser.  
+It is the WebSocket server itself that opens the web page by launching the default browser.  
 This makes the web application as easy to launch as a real desktop application.  
+The WebSocket server can then receive commands from the web interface through a socket and executes them  
+with system level access.
 
-This automated process is necessary to pass information to the JavaScript running the web application.  
-This information is the web socket port number and the user platform. Both are passed in the fragment  
-identifier appended to the web page URL.
+This automated lauching process is necessary to pass information to the JavaScript running the web application.  
+This information is the socket port number, the user platform and the server version.  
+All are passed in the fragment identifier appended to the web page URL.
 
-Trying to open the web page using a bookmark, a link, pasting or typing the url will issue an error message.
+Trying to reload, to open the web page using a bookmark, a link or pasting/typing the url will issue an error message.
   
 -------------------------------------
 INSTALLATION OF THE WEBSOCKET SERVER:
@@ -32,7 +35,7 @@ On Linux/MacOS:   start with 'ydownloader.sh'
 </pre>
 
 -----------------------------------------------
-If Node.js, yt-dlp and ffmpeg are NOT installed.
+If some utilities are NOT installed. The following download links can be usefull.
 
 Download 'Node.js' latest version at: https://nodejs.org/en/download  
 This is an archive file for Linux/MacOS or an msi file for Windows.
