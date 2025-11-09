@@ -1,10 +1,18 @@
+###
+ This is a WebSocket server that acts as a bridge between a client (browser)
+ and the operating system to execute system level utilities and scripts.
+  
+  The total disk usage is ~170K.
+###
+
+VERSION = '#1.0'
 
 webpage    = process.argv[2]
 socketport = process.argv[3]
-data = null
 
-timeout      = true     # flag a delay for client to respond
+timeout = true          # flag end of delay for client to connect
 activeClient = null     # only one client accepted at a time
+data = null             # save data from client prior script execution
 
 if socketport is '' or webpage is ''
     console.log 'Syntax: node websocket.js <web_app_url> <socket_port>'
@@ -24,7 +32,7 @@ wss._server.on 'listening', ->
     setTimeout shutdown, 10000
 
     # Launch client (browser)
-    fragment = '#,' + process.platform + ',' + socketport
+    fragment = "#{VERSION},#{process.platform},#{socketport}"
     launchBrowser( webpage, fragment )
 
 # --------------------------------------
@@ -41,7 +49,7 @@ wss.on 'error', (err) ->
 # When client connects
 wss.on 'connection', (ws) ->
     if activeClient
-        ws.close(1000, 'Only one client allowed at a time')  # 1000=nomal close
+        ws.close(1000, 'Only one client allowed at a time')  # 1000=normal close
         return
 
     activeClient = ws
@@ -57,7 +65,6 @@ wss.on 'connection', (ws) ->
    # When server receives a command from client
     ws.on 'message', (message) ->
         command = JSON.parse(message)
-        #~ console.log 'Server received:', command.cmd
         
         switch command.action
             when 'exec'
@@ -76,7 +83,16 @@ wss.on 'connection', (ws) ->
                 catch
                     result = '#ERROR'
                 ws.send result
-                            
+            when 'update'
+                # Update the JS copy of this very script
+                fs = require 'fs'
+                try 
+                    fs.writeFileSync __filename, command.cmd
+                    ws.send "Success"
+                catch
+                    ws.send "Fail"
+                    console.error "Cannot update WebSocket server"
+            
 # ---------------------------------------------------------------------
 openBrowser = (url) ->
     switch process.platform
