@@ -21,13 +21,12 @@
   window.socketClient = function() {
     var exec, fragment, platform, read, ref, script, send, serverPlatform, serverReply, serverVersion, serversion, socket, socketPort, update;
     fragment = location.hash.split(',');
-    switch (false) {
-      case fragment[0] !== '#BUSY':
-        document.body.innerHTML = 'The application is already in use in another tab or browser';
-        throw new Error('WebScoket already in use');
-      case fragment[0] !== '#ERROR':
-        document.body.innerHTML = 'WebSocket connection error';
-        throw new Error('WebSocket connection error');
+    if (fragment[0] === '#BUSY') {
+      document.body.innerHTML = 'The application is already in use in another tab or browser';
+      throw new Error('WebScoket already in use');
+    } else if (fragment[0] === '#ERROR') {
+      document.body.innerHTML = 'WebSocket connection error';
+      throw new Error('WebSocket connection error');
     }
     serverVersion = fragment[0];
     serverPlatform = fragment[1];

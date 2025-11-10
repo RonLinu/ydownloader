@@ -18,13 +18,12 @@
 window.socketClient = ->
     fragment = location.hash.split(',')
     
-    switch
-        when fragment[0] is '#BUSY'
-            document.body.innerHTML = 'The application is already in use in another tab or browser'
-            throw new Error 'WebScoket already in use'
-        when fragment[0] is '#ERROR'
-            document.body.innerHTML = 'WebSocket connection error'
-            throw new Error 'WebSocket connection error'
+    if fragment[0] is '#BUSY'
+        document.body.innerHTML = 'The application is already in use in another tab or browser'
+        throw new Error 'WebScoket already in use'
+    else if fragment[0] is '#ERROR'
+        document.body.innerHTML = 'WebSocket connection error'
+        throw new Error 'WebSocket connection error'
 
     serverVersion  = fragment[0]
     serverPlatform = fragment[1]
