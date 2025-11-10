@@ -5,7 +5,7 @@
   The total disk usage is ~170K.
 ###
 
-VERSION = '#1.0'
+VERSION = '#1.1'
 
 webpage    = process.argv[2]
 socketport = process.argv[3]
@@ -32,18 +32,18 @@ wss._server.on 'listening', ->
     setTimeout shutdown, 10000
 
     # Launch client (browser)
-    fragment = "#{VERSION},#{process.platform},#{socketport}"
+    fragment = "#{VERSION},#{process.platform},#{socketport},"
     launchBrowser( webpage, fragment )
 
 # --------------------------------------
 wss.on 'error', (err) ->
     if err.code is 'EADDRINUSE'
         console.error 'Port', socketport, 'is already in use'
-        launchBrowser(webpage, '#BUSY')
+        launchBrowser(webpage, '#BUSY,')
     else
         firstline = err.message.split('\n')[0]
         console.error 'WebSocket server error:', firstline
-        launchBrowser(webpage, '#ERROR')
+        launchBrowser(webpage, '#ERROR,')
 
 # --------------------------------------
 # When client connects
