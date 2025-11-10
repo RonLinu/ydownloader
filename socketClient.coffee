@@ -5,27 +5,30 @@
  Its main purpose is to execute system commands and scripts with system
  level access using Node.js.
 
- There are five sub-functions to:
+ There are few sub-functions provided to:
  - send a system command to be executed at server side
  - send a script code to be executed at server side
  - assign data to a server variable to be used by the script code (if needed)
  - read the return data of a system command or a script code execution
  - return the platform detected at server side, immune to browser spoofing
+ - return the server version
+ - update "live" the server script
 ###
 
 window.socketClient = ->
-    switch location.hash
-        when '#BUSY'
+    fragment = location.hash.split(',')
+    
+    switch
+        when fragment[0] is '#BUSY'
             document.body.innerHTML = 'The application is already in use in another tab or browser'
             throw new Error 'WebScoket already in use'
-        when '#ERROR'
+        when fragment[0] is '#ERROR'
             document.body.innerHTML = 'WebSocket connection error'
             throw new Error 'WebSocket connection error'
 
-    serverVersion  = location.hash.split(',')[0]
-    serverPlatform = location.hash.split(',')[1]
-
-    socketPort = location.hash.split(',')[2]
+    serverVersion  = fragment[0]
+    serverPlatform = fragment[1]
+    socketPort     = fragment[2]
 
     serverReply = ''
 
@@ -78,7 +81,7 @@ window.socketClient = ->
             cmd: data
         socket.send cmd
 
-    # Update the WebSocket server script (experimental)
+    # Update "live" the WebSocket server script (experimental)
     update = (data) ->
         cmd = JSON.stringify
             action: 'update'

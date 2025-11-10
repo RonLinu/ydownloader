@@ -147,7 +147,7 @@ do ->
     match = window.serverCopy.match /#\d+(\.\d+)?/
     if not match?
         return
-
+        
     versionOnFile = match[0]
 
     if versionOnFile > socket.serversion()
@@ -199,7 +199,6 @@ document.getElementById('about').onclick = ->
         <br><br>
         \u00A9 2025 - RonLinu
         '''
-
     showAlert('YDownloader 1.0', '', msg)
 
 # --------------------------------------------------------------------
