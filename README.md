@@ -1,21 +1,22 @@
 
-Experimental web application to download videos using these well known video download utilities:  
+Experimental web application to download videos using the well known video download utilities:  
 - yt-dlp for video download
 - ffmepg for video format conversion
 
-My goal is to create a web interface with system level access using a WebSocket server instead  
-of a packager like Electron to run JavaScript code.
+My goal is to create a web interface that can run JavaScript code with system level access using a WebSocket  
+server acting as a bridge between a browser and the operating system instead of a packager like Electron.
 
-The web application or interface is hosted on GitHub. Only the WebSocket server is needed on the user computer.  
-The WebSocket server has a very low disk usage, about 175K bytes.
+The web application itself is hosted on GitHub, only the WebSocket server is needed on the user computer.  
+The WebSocket server has a very low disk usage: about 175K bytes.
 
-It is the WebSocket server itself that opens the web page by launching the default browser.  
+Once started, it is the WebSocket server itself that starts the default browser with the correct web page.  
 This makes the web application as easy to launch as a real desktop application.  
-The WebSocket server can then receive commands from the web interface through a socket and executes them  
-with system level access.
 
-This automated lauching process is necessary to pass information to the JavaScript running the web application.  
-This information is the socket port number, the user platform and the server version.  
+The WebSocket server can accept commands and mini-scripts from the web application through a socket and  
+executes them with system level access.
+
+The automated lauching process of the default browser is necessary to pass some information to the JavaScript  
+running in the browser. This information is the socket port number, the user platform and the server version.  
 All are passed in the fragment identifier appended to the web page URL.
 
 Trying to reload, to open the web page using a bookmark, a link or pasting/typing the url will issue an error message.
