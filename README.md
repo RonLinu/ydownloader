@@ -22,10 +22,12 @@ All are passed in the fragment identifier appended to the web page URL.
 Trying to reload, to open the web page using a bookmark, a link or pasting/typing the url will issue an error message.
   
 -------------------------------------
-INSTALLATION OF THE WEBSOCKET SERVER:
+<p align="center">INSTALLATION OF THE WEBSOCKET SERVER</p>
 
-Assuming Node.js, yt-dlp and ffmpeg are already installed and included in the PATH.  
-On Linux, xterm terminal must be installed.
+When running the web application, the button 'Check dependencies' is usefull to check if everything is installed.
+
+Assuming Node.js and yt-dlp, ffmpeg are already installed and included in the PATH.  
+Note that on Linux, xterm terminal must be installed as well.
 
 Just copy the "websocket" directory provided in this repo.
 
@@ -36,7 +38,8 @@ On Linux/MacOS:   start with 'ydownloader.sh'
 </pre>
 
 -----------------------------------------------
-If some utilities are NOT installed. The following download links can be usefull.
+If some utilities are NOT installed. The following download links can be usefull.  
+On a Linux distribution, these are available in repositories.
 
 Download 'Node.js' latest version at: https://nodejs.org/en/download  
 This is an archive file for Linux/MacOS or an msi file for Windows.
