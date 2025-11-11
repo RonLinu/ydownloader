@@ -1,5 +1,5 @@
 
-socket = socketClient()    # start communication with socket server
+server = serverHandler()    # start socket communication with server
 
 window.onload = ->
     # Focus on video URL field when page is loaded
@@ -143,28 +143,33 @@ do ->
 
 # --------------------------------------
 do ->
-    # Check if new server version is available INSIDE window.serverCopy variable
-    match = window.serverCopy.match /#\d+(\.\d+)?/
+    # Check if new server version is available in 'latestServerCode' variable
+    match = window.latestServerCode.match /#\d+(\.\d+)?/
     if not match?
         return
         
-    versionOnFile = match[0]
+    lastestServerVersion = match[0]
 
-    if versionOnFile > socket.serversion()
+    if lastestServerVersion > server.version()
         msg = 'The WebSocket server has an update available.<br><br>'
         msg += 'Do you want to update now?<br><br>'
-        msg += '<i>The new version we will take effect on the next launch</i>'
 
         reply = await askConfirm('', 'warning', msg)
 
         if reply.isConfirmed
-            socket.update(window.serverCopy)
-            result = await socket.read()
-            showAlert('Update status', '', result)
+            server.update(window.latestServerCode)
+            result = await server.read()
+            if result is 'Success'
+                msg = 'The update was successfull!<br><br>'
+                msg += 'The application must be restarted for the update to take effect.'
+            else
+                msg = 'The update has failed.<br><br>'
+                msg += 'This is problably due to unexpected file/folder permissions.'
+            showAlert('Update status', '', msg)
 
 # --------------------------------------
 getVideoFolder = ->
-    switch socket.platform()
+    switch server.platform()
         when 'win32' then '%USERPROFILE%\\Videos'
         when 'linux' then '$HOME/Videos'
         when 'darwin' then '$HOME/Movies'
@@ -174,7 +179,7 @@ getVideoFolder = ->
 document.getElementById('openfolder').onclick = ->
     videoFolder = getVideoFolder()
 
-    cmd = switch socket.platform()
+    cmd = switch server.platform()
         when 'win32'
             """explorer "#{videoFolder}" """
         when 'linux'
@@ -189,7 +194,7 @@ document.getElementById('openfolder').onclick = ->
     answer = await showAlert('Notice', '', msg)
 
     if answer.isConfirmed
-        socket.exec(cmd)
+        server.exec(cmd)
 
 # --------------------------------------------------------------------
 # 'About' button click
@@ -199,19 +204,22 @@ document.getElementById('about').onclick = ->
         <br><br>
         \u00A9 2025 - RonLinu
         '''
-    showAlert('YDownloader 1.0', '', msg)
+    showAlert('YDownloader 1.1', '', msg)
 
 # --------------------------------------------------------------------
 # 'Check dependencies' button click
 document.getElementById('dependencies').onclick = ->
     results = ''
+    missingCount = 0
+
     failCross = '&#x2718;'
     goodCheck = '&#x2714;'
 
-    gather_results = (name, result) ->
+    gatherResults = (name, result) ->
         results += "<b>#{name}&nbsp;</b><span style='color: "
         if /is not|not found|#TIMEOUT/i.test result
             results += "red;'>#{failCross}</span><br>"
+            missingCount++
         else
             results += "green;'>#{goodCheck}</span><br>"
 
@@ -221,29 +229,27 @@ document.getElementById('dependencies').onclick = ->
       text: 'Checking is in progress...'
       showConfirmButton: false
       allowOutsideClick: false
-      didOpen: () ->
-        Swal.showLoading()
+      didOpen: () -> Swal.showLoading()
 
     # Start sequence of tests, one dependency at a time
-    socket.exec('yt-dlp --version')
-    result = await socket.read()
-    gather_results 'yt-dlp', result
+    server.exec('yt-dlp --version')
+    result = await server.read()
+    gatherResults 'yt-dlp', result
 
-    socket.exec('ffmpeg -version')
-    result = await socket.read()
-    gather_results 'ffmpeg', result
+    server.exec('ffmpeg -version')
+    result = await server.read()
+    gatherResults 'ffmpeg', result
 
-    if socket.platform() is 'linux'
-        socket.exec('xterm -version')
-        result = await socket.read()
-        gather_results 'xterm ', result
+    if server.platform() is 'linux'
+        server.exec('xterm -version')
+        result = await server.read()
+        gatherResults 'xterm ', result
 
-    if results.indexOf(failCross) == -1
-        results += '\nAll good!'
+    if missingCount
+        plural  = if missingCount > 1 then 'cies are' else 'cy is'
+        results += "\n #{missingCount} dependen#{plural} missing!"
     else
-        howmany = results.split(failCross).length - 1
-        plural  = if howmany > 1 then 'dependencies are' else 'dependency is'
-        results += "\n #{howmany} #{plural} missing!"
+        results += '\nAll good!'
 
     Swal.close()
     showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
@@ -251,8 +257,8 @@ document.getElementById('dependencies').onclick = ->
 # --------------------------------------------------------------------
 # 'Help' button click
 document.getElementById('help').onclick = ->
-    msg = window.HELP
-    if socket.platform() is 'linux'
+    msg = window.help
+    if server.platform() is 'linux'
         # Add Linux 'xterm' to the list of dependencies
         msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>')
 
@@ -323,7 +329,7 @@ document.getElementById('download').onclick = ->
          '--buffer-size 16M ' +
          '"' + url + '"'
 
-    final_cmd = switch socket.platform()
+    final_cmd = switch server.platform()
         when 'win32'
             """cmd /c start "" cmd /k #{ytdlp_cmd} """
         when 'linux'
@@ -331,5 +337,5 @@ document.getElementById('download').onclick = ->
         when 'darwin'
             """osascript -e 'tell application "Terminal" to do script "#{ytdlp_cmd}; do shell'" """
 
-    socket.exec(final_cmd, 0)    # 0 = no timeout to download videos
+    server.exec(final_cmd, 0)    # 0 = no timeout to download videos
 
