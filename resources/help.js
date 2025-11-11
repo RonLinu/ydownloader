@@ -1,4 +1,4 @@
-window.HELP = `
+window.help = `
 To download a video, paste its URL in the 'Video URL' field and click the 'Download' button.
 A terminal window will open showing the download progress.
 <br><br>
