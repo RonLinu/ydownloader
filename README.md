@@ -15,9 +15,9 @@ This makes the web application as easy to launch as a real desktop application.
 The WebSocket server can accept commands and mini-scripts from the web application through a socket  
 and executes them with system level access.
 
-The automated launching process of the default browser is necessary to pass some information to the JavaScript  
-running in the browser. This information is the socket port number, the user platform and the server version.  
-All are passed in the fragment identifier appended to the web page URL.
+The automated launching process of the default browser is necessary to pass some information to  
+the JavaScript running in the browser. This information is the socket port number, the user platform  
+and the server version. All are passed in the fragment identifier appended to the web page URL.
 
 Trying to reload or to open the web page without using the WebSocket server will issue an error message.
   
