@@ -24,31 +24,29 @@ Trying to reload, to open the web page using a bookmark, a link or pasting/typin
 -------------------------------------
 <p align="center">INSTALLATION OF THE WEBSOCKET SERVER</p>
 
-When running the web application, the button 'Check dependencies' is usefull to check if everything is installed.
+Only download the 'websocket' directory from this repository and place it in a location  
+that's convenient for you.  
 
-Assuming Node.js and yt-dlp, ffmpeg are already installed and included in the PATH.  
-Note that on Linux, xterm terminal must be installed as well.
-
-Just copy the "websocket" directory provided in this repo.
-
-To run the web application, go in your 'websocket' directory:  
+To run the web application, go in your 'websocket' directory:
 <pre>
 On Windows:       start with 'ydownloader.vbs'
 On Linux/MacOS:   start with 'ydownloader.sh'
 </pre>
+Once the application is running, click the button 'Check dependencies' to verify if  
+all dependencies (yt-dlp and ffmpeg, and xterm on Linux) are installed and accessible.
 
 -----------------------------------------------
 If some utilities are NOT installed. The following download links can be usefull.  
-On a Linux distribution, these are available in repositories.
+On a Linux distribution, the utilities are available in standard repositories.
 
-Download 'Node.js' latest version at: https://nodejs.org/en/download  
+'Node.js' latest version at: https://nodejs.org/en/download  
 This is an archive file for Linux/MacOS or an msi file for Windows.
 
-Download 'yt-dlp' latest version at: https://github.com/yt-dlp/yt-dlp/releases   
+'yt-dlp' latest version at: https://github.com/yt-dlp/yt-dlp/releases   
 This is a single executable.
 
-Download 'ffmpeg' latest version at: https://github.com/BtbN/FFmpeg-Builds/releases  
+'ffmpeg' latest version at: https://github.com/BtbN/FFmpeg-Builds/releases  
 This is an archive file (zip or tar-xz).  
 Just extract the files contained in the 'bin' directory of the zip file.
 
-Copy ALL yt-dlp and ffmepg files in a directory of your choice and add it to your PATH.
+Copy all yt-dlp and ffmepg files in a directory of your choice and add it to your PATH.
