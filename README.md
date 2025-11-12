@@ -4,7 +4,7 @@ Experimental web application to download videos using the well known video downl
 - ffmepg for video format conversion
 
 My goal is to create a web interface that can run JavaScript code with system level access using a WebSocket  
-server acting as a bridge between a browser and the operating system instead of a packager like Electron.
+server. The server acts as a bridge between a browser and the operating system.
 
 The web application itself is hosted on GitHub, only the WebSocket server is needed on the user computer.  
 The WebSocket server has a very low disk usage: about 175K bytes.
@@ -12,14 +12,14 @@ The WebSocket server has a very low disk usage: about 175K bytes.
 Once started, it is the WebSocket server itself that starts the default browser with the correct web page.  
 This makes the web application as easy to launch as a real desktop application.  
 
-The WebSocket server can accept commands and mini-scripts from the web application through a socket and  
-executes them with system level access.
+The WebSocket server can accept commands and mini-scripts from the web application through a socket  
+and executes them with system level access.
 
-The automated lauching process of the default browser is necessary to pass some information to the JavaScript  
+The automated launching process of the default browser is necessary to pass some information to the JavaScript  
 running in the browser. This information is the socket port number, the user platform and the server version.  
 All are passed in the fragment identifier appended to the web page URL.
 
-Trying to reload, to open the web page using a bookmark, a link or pasting/typing the url will issue an error message.
+Trying to reload or to open the web page without using the WebSocket server will issue an error message.
   
 -------------------------------------
 <p align="center">INSTALLATION OF THE WEBSOCKET SERVER</p>
@@ -37,10 +37,11 @@ all dependencies (yt-dlp and ffmpeg, and xterm on Linux) are installed and acces
 
 -----------------------------------------------
 If some utilities are NOT installed. The following download links can be usefull.  
-On a Linux distribution, the utilities are available in standard repositories.
+On a Linux distribution, these utilities are available in standard repositories and should  
+take a minute to install all.
 
 'Node.js' latest version at: https://nodejs.org/en/download  
-This is an archive file for Linux/MacOS or an msi file for Windows.
+This is an archive file for the MacOS or an msi file for Windows.
 
 'yt-dlp' latest version at: https://github.com/yt-dlp/yt-dlp/releases   
 This is a single executable.
