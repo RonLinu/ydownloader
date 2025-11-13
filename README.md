@@ -25,7 +25,7 @@ Trying to reload or to open the web page without using the WebSocket server will
 <p align="center">INSTALLATION OF THE WEBSOCKET SERVER</p>
 
 Only download the 'websocket' directory from this repository and place it in a location  
-that's convenient for you.  
+that's convenient for you.
 
 To run the web application, go in your 'websocket' directory:
 <pre>
@@ -39,9 +39,6 @@ all dependencies (yt-dlp and ffmpeg, and xterm on Linux) are installed and acces
 If some utilities are NOT installed. The following download links can be usefull.  
 On a Linux distribution, these utilities are available in standard repositories and should  
 take a minute to install all.
-
-'Node.js' latest version at: https://nodejs.org/en/download  
-This is an archive file for the MacOS or an msi file for Windows.
 
 'yt-dlp' latest version at: https://github.com/yt-dlp/yt-dlp/releases   
 This is a single executable.
