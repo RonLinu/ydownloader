@@ -3,8 +3,9 @@ Experimental web application to download videos using the well known video downl
 - yt-dlp for video download
 - ffmepg for video format conversion
 
-My goal is to create a web interface that can run JavaScript code with system level access using a WebSocket  
-server. The server acts as a bridge between a browser and the operating system.
+My goal is to create a web interface that can run JavaScript code with system level access using
+a WebSocket server. The server acts as a bridge between a browser and the operating system.  
+The WebScoket server needs Node.js installed.
 
 The web application itself is hosted on GitHub, only the WebSocket server is needed on the user computer.  
 The WebSocket server has a very low disk usage: about 175K bytes.
@@ -24,8 +25,8 @@ Trying to reload or to open the web page without using the WebSocket server will
 -------------------------------------
 <p align="center">INSTALLATION OF THE WEBSOCKET SERVER</p>
 
-Only download the 'websocket' directory from this repository and place it in a location  
-that's convenient for you.
+Assuming Node.js is installed, download the 'websocket' directory from this repository  
+and place it in a location that's convenient for you.
 
 To run the web application, go in your 'websocket' directory:
 <pre>
