@@ -9,7 +9,8 @@
     return document.getElementById('videoUrl').focus();
   };
 
-  // --------------------------------------
+  resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'];
+
   languages = {
     'Afrikaans': 'af',
     'Amharic': 'am',
@@ -64,8 +65,6 @@
     'Zulu': 'zu'
   };
 
-  resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'];
-
   // *********************************************************************
   showAlert = function(title, icon, msg, textalign = 'center') {
     return Swal.fire({
@@ -90,32 +89,6 @@
       allowOutsideClick: false
     });
   };
-
-  (function() {    // --------------------------------------
-    var checkbox, container, label, language, results1;
-    // Create checkbox panel with all supported languages
-    container = document.querySelector('.checkbox-grid');
-    results1 = [];
-    for (language in languages) {
-      // Create a label element
-      label = document.createElement('label');
-      // Create the checkbox input element
-      checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.name = 'language';
-      checkbox.value = language;
-      if (language === 'English') {
-        checkbox.checked = true;
-      }
-      // Append the checkbox into the label
-      label.appendChild(checkbox);
-      // Add the label text node (for example "English")
-      label.appendChild(document.createTextNode(language));
-      // Append the label to the container
-      results1.push(container.appendChild(label));
-    }
-    return results1;
-  })();
 
   (function() {    // --------------------------------------
     var brTag, container, i, index, label, len, radio, resolution, results1;
@@ -148,27 +121,55 @@
     return results1;
   })();
 
+  (function() {    // --------------------------------------
+    var checkbox, container, label, language, results1;
+    // Create checkbox panel with all supported languages
+    container = document.querySelector('.checkbox-grid');
+    results1 = [];
+    for (language in languages) {
+      // Create a label element
+      label = document.createElement('label');
+      // Create the checkbox input element
+      checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'language';
+      checkbox.value = language;
+      if (language === 'English') {
+        checkbox.checked = true;
+      }
+      // Append the checkbox into the label
+      label.appendChild(checkbox);
+      // Add the label text node (for example "English")
+      label.appendChild(document.createTextNode(language));
+      // Append the label to the container
+      results1.push(container.appendChild(label));
+    }
+    return results1;
+  })();
+
   (async function() {    // --------------------------------------
-    var lastestServerVersion, match, msg, reply, result;
+    var match, msg, reply, result;
     // Check if new server version is available in 'latestServerCode' variable
     match = window.latestServerCode.match(/#\d+(\.\d+)?/);
     if (match == null) {
       return;
     }
-    lastestServerVersion = match[0];
-    if (lastestServerVersion > server.version()) {
-      msg = 'The WebSocket server has an update available.<br><br>';
-      msg += 'Do you want to update now?<br><br>';
+    if (match[0] > server.version()) {
+      msg = `The WebSocket server has an update available.<br>
+<br>
+Do you want to update now?<br><br>`;
       reply = (await askConfirm('', 'warning', msg));
       if (reply.isConfirmed) {
         server.update(window.latestServerCode);
         result = (await server.read());
         if (result === 'Success') {
-          msg = 'The update was successfull!<br><br>';
-          msg += 'The application must be restarted for the update to take effect.';
+          msg = `The update was successfull!<br>
+<br>
+The application must be restarted for the update to take effect.`;
         } else {
-          msg = 'The update has failed.<br><br>';
-          msg += 'This is problably due to unexpected file/folder permissions.';
+          msg = `The update has failed.<br>
+<br>
+This is problably due to unexpected file/folder permissions.`;
         }
         return showAlert('Update status', '', msg);
       }
@@ -176,53 +177,29 @@
   })();
 
   // --------------------------------------
-  getVideoFolder = function() {
-    switch (server.platform()) {
-      case 'win32':
-        return '%USERPROFILE%\\Videos';
-      case 'linux':
-        return '$HOME/Videos';
-      case 'darwin':
-        return '$HOME/Movies';
+  // 'Help' button
+  document.getElementById('help').onclick = function() {
+    var msg;
+    msg = window.help;
+    if (server.platform() === 'linux') {
+      // Add Linux 'xterm' to the list of dependencies
+      msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>');
     }
+    return showAlert('Help', '', msg, 'left');
   };
 
-  // --------------------------------------------------------------------
-  // 'Open video folder' button click
-  document.getElementById('openfolder').onclick = async function() {
-    var answer, cmd, msg, videoFolder;
-    videoFolder = getVideoFolder();
-    cmd = (function() {
-      switch (server.platform()) {
-        case 'win32':
-          return `explorer "${videoFolder}" `;
-        case 'linux':
-          return `xdg-open "${videoFolder}" `;
-        case 'darwin':
-          return `open "${videoFolder}" `;
-      }
-    })();
-    msg = 'If the video folder does not appear,<br>';
-    msg += 'look behind the browser window or in the task bar.<br>';
-    msg += '<br><i>click Ok to open the folder</i>';
-    answer = (await showAlert('Notice', '', msg));
-    if (answer.isConfirmed) {
-      return server.exec(cmd);
-    }
-  };
-
-  // --------------------------------------------------------------------
-  // 'About' button click
+  // --------------------------------------
+  // 'About' button
   document.getElementById('about').onclick = function() {
     var msg;
-    msg = `A web interface for <i>yt-dlp</i> video download utility
-<br><br>
+    msg = `A web interface for <i>yt-dlp</i> video download utility<br>
+<br>
 \u00A9 2025 - RonLinu`;
     return showAlert('YDownloader 1.1', '', msg);
   };
 
-  // --------------------------------------------------------------------
-  // 'Check dependencies' button click
+  // --------------------------------------
+  // 'Check dependencies' button
   document.getElementById('dependencies').onclick = async function() {
     var failCross, gatherResults, goodCheck, missingCount, plural, result, results;
     results = '';
@@ -230,8 +207,10 @@
     failCross = '&#x2718;';
     goodCheck = '&#x2714;';
     gatherResults = function(name, result) {
+      var regex;
       results += `<b>${name}&nbsp;</b><span style='color: `;
-      if (/is not|not found|#TIMEOUT/i.test(result)) {
+      regex = /is not|not found|#TIMEOUT/i;
+      if (regex.test(result)) {
         results += `red;'>${failCross}</span><br>`;
         return missingCount++;
       } else {
@@ -270,22 +249,47 @@
     return showAlert('Status of dependencies', '', `<pre>${results}</pre>`);
   };
 
-  // --------------------------------------------------------------------
-  // 'Help' button click
-  document.getElementById('help').onclick = function() {
-    var msg;
-    msg = window.help;
-    if (server.platform() === 'linux') {
-      // Add Linux 'xterm' to the list of dependencies
-      msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>');
+  // --------------------------------------
+  getVideoFolder = function() {
+    switch (server.platform()) {
+      case 'win32':
+        return '%USERPROFILE%\\Videos';
+      case 'linux':
+        return '$HOME/Videos';
+      case 'darwin':
+        return '$HOME/Movies';
     }
-    return showAlert('Help', '', msg, 'left');
   };
 
   // --------------------------------------
+  // 'Open video folder' button
+  document.getElementById('openfolder').onclick = async function() {
+    var answer, cmd, msg, videoFolder;
+    videoFolder = getVideoFolder();
+    cmd = (function() {
+      switch (server.platform()) {
+        case 'win32':
+          return `explorer "${videoFolder}" `;
+        case 'linux':
+          return `xdg-open "${videoFolder}" `;
+        case 'darwin':
+          return `open "${videoFolder}" `;
+      }
+    })();
+    msg = `If the video folder does not appear,<br>
+look behind the browser window or in the task bar.<br>
+<br>
+<i>click Ok to open the folder</i>`;
+    answer = (await showAlert('Notice', '', msg));
+    if (answer.isConfirmed) {
+      return server.exec(cmd);
+    }
+  };
+
+  // --------------------------------------------------------------------
   // 'Download' button click
   document.getElementById('download').onclick = function() {
-    var abbreviations, checked, checkedLanguages, final_cmd, i, index, isValidUrl, len, option_merging, option_resolution, option_subtitles, resolution, selectedResolution, subtitles, url, ytdlp_cmd;
+    var abbreviations, checked, checkedLanguages, final_cmd, i, index, isValidUrl, len, option_merging, option_playlist, option_resolution, option_subtitles, resolution, selectedResolution, subtitles, url, ytdlp_cmd;
     // Local function to check URL validity
     isValidUrl = function(url) {
       var urlObj;
@@ -296,7 +300,6 @@
         return false;
       }
     };
-    // ------------------------------------
     url = document.getElementById('videoUrl').value.trim();
     if (!url) {
       showAlert('', 'error', 'The Video URL field is empty.');
@@ -305,24 +308,28 @@
       showAlert('', 'error', 'The Video URL is not valid.');
       return;
     }
-    // Remove any playlist, just download the main video
-    index = url.indexOf("?list");
-    if (index !== -1) {
-      url = url.slice(0, index);
-    }
     option_resolution = '';
     option_subtitles = '';
     option_merging = '';
-    selectedResolution = document.querySelector('input[name="resolutions"]:checked').value;
-    if (selectedResolution === 'No cap') {
-      option_resolution = '-f best ';
-    } else if (selectedResolution === 'Audio only') {
-      option_resolution = '-x --audio-format mp3 ';
-    } else {
-      // Extract resolution number
-      resolution = parseInt(selectedResolution);
-      option_resolution = '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" ';
+    option_playlist = '';
+    
+    // Ignore playlist, just download the main video (not reliable)
+    index = url.indexOf("&list");
+    if (index !== -1) {
+      option_playlist = '--no-playlist ';
     }
+    selectedResolution = document.querySelector('input[name="resolutions"]:checked').value;
+    option_resolution = (function() {
+      switch (selectedResolution) {
+        case 'No cap':
+          return '-f bestvideo+bestaudio/best '; // '-f best '
+        case 'Audio only':
+          return '-x --audio-format mp3 ';
+        default:
+          resolution = parseInt(selectedResolution);
+          return '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" ';
+      }
+    })();
     if (selectedResolution !== 'Audio only') {
       option_merging = '--merge-output-format mkv --remux-video mkv ';
       // Extract abbreviations of selected subtitle languages into an array
@@ -337,7 +344,8 @@
         option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs ';
       }
     }
-    ytdlp_cmd = 'yt-dlp ' + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + getVideoFolder() + '" ' + option_resolution + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
+    ytdlp_cmd = 'yt-dlp ' + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + getVideoFolder() + '" ' + option_resolution + option_playlist + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
+    console.log(ytdlp_cmd);
     final_cmd = (function() {
       switch (server.platform()) {
         case 'win32':

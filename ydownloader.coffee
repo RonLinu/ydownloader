@@ -5,7 +5,11 @@ window.onload = ->
     # Focus on video URL field when page is loaded
     document.getElementById('videoUrl').focus()
 
-# --------------------------------------
+resolutions = [
+    '360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)',
+    '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'
+]
+
 languages =
     'Afrikaans'   : 'af'
     'Amharic'     : 'am'
@@ -59,11 +63,6 @@ languages =
     'Xhosa'       : 'xh'
     'Zulu'        : 'zu'
 
-resolutions = [
-    '360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)',
-    '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'
-]
-
 # *********************************************************************
 
 showAlert = (title, icon, msg, textalign='center') ->
@@ -85,32 +84,6 @@ askConfirm = (title, icon, msg, textalign='center') ->
         cancelButtonText: 'No'
         focusCancel: true
         allowOutsideClick: false
-
-# --------------------------------------
-do ->
-    # Create checkbox panel with all supported languages
-    container = document.querySelector('.checkbox-grid')
-
-    for language of languages
-        # Create a label element
-        label = document.createElement('label')
-
-        # Create the checkbox input element
-        checkbox = document.createElement('input')
-        checkbox.type = 'checkbox'
-        checkbox.name = 'language'
-        checkbox.value = language
-
-        if language in ['English'] then checkbox.checked = true
-
-        # Append the checkbox into the label
-        label.appendChild(checkbox)
-
-        # Add the label text node (for example "English")
-        label.appendChild(document.createTextNode(language))
-
-        # Append the label to the container
-        container.appendChild(label)
 
 # --------------------------------------
 do ->
@@ -143,16 +116,41 @@ do ->
 
 # --------------------------------------
 do ->
-    # Check if new server version is available in 'latestServerCode' variable
-    match = window.latestServerCode.match /#\d+(\.\d+)?/
-    if not match?
-        return
-        
-    lastestServerVersion = match[0]
+    # Create checkbox panel with all supported languages
+    container = document.querySelector('.checkbox-grid')
 
-    if lastestServerVersion > server.version()
-        msg = 'The WebSocket server has an update available.<br><br>'
-        msg += 'Do you want to update now?<br><br>'
+    for language of languages
+        # Create a label element
+        label = document.createElement('label')
+
+        # Create the checkbox input element
+        checkbox = document.createElement('input')
+        checkbox.type = 'checkbox'
+        checkbox.name = 'language'
+        checkbox.value = language
+
+        if language in ['English'] then checkbox.checked = true
+
+        # Append the checkbox into the label
+        label.appendChild(checkbox)
+
+        # Add the label text node (for example "English")
+        label.appendChild(document.createTextNode(language))
+
+        # Append the label to the container
+        container.appendChild(label)
+
+
+# --------------------------------------
+do ->
+    # Check if new server version is available in 'latestServerCode' variable
+    match = window.latestServerCode.match(/#\d+(\.\d+)?/)
+    if not match? then return
+    
+    if match[0] > server.version()
+        msg = '''The WebSocket server has an update available.<br>
+                <br>
+                Do you want to update now?<br><br>'''
 
         reply = await askConfirm('', 'warning', msg)
 
@@ -160,54 +158,37 @@ do ->
             server.update(window.latestServerCode)
             result = await server.read()
             if result is 'Success'
-                msg = 'The update was successfull!<br><br>'
-                msg += 'The application must be restarted for the update to take effect.'
+                msg = '''The update was successfull!<br>
+                        <br>
+                        The application must be restarted for the update to take effect.'''
             else
-                msg = 'The update has failed.<br><br>'
-                msg += 'This is problably due to unexpected file/folder permissions.'
+                msg = '''The update has failed.<br>
+                        <br>
+                        This is problably due to unexpected file/folder permissions.'''
             showAlert('Update status', '', msg)
 
 # --------------------------------------
-getVideoFolder = ->
-    switch server.platform()
-        when 'win32' then '%USERPROFILE%\\Videos'
-        when 'linux' then '$HOME/Videos'
-        when 'darwin' then '$HOME/Movies'
+# 'Help' button
+document.getElementById('help').onclick = ->
+    msg = window.help
+    if server.platform() is 'linux'
+        # Add Linux 'xterm' to the list of dependencies
+        msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>')
 
-# --------------------------------------------------------------------
-# 'Open video folder' button click
-document.getElementById('openfolder').onclick = ->
-    videoFolder = getVideoFolder()
+    showAlert('Help', '', msg, 'left')
 
-    cmd = switch server.platform()
-        when 'win32'
-            """explorer "#{videoFolder}" """
-        when 'linux'
-            """xdg-open "#{videoFolder}" """
-        when 'darwin'
-            """open "#{videoFolder}" """
-
-    msg = 'If the video folder does not appear,<br>'
-    msg += 'look behind the browser window or in the task bar.<br>'
-    msg += '<br><i>click Ok to open the folder</i>'
-
-    answer = await showAlert('Notice', '', msg)
-
-    if answer.isConfirmed
-        server.exec(cmd)
-
-# --------------------------------------------------------------------
-# 'About' button click
+# --------------------------------------
+# 'About' button
 document.getElementById('about').onclick = ->
     msg = '''
-        A web interface for <i>yt-dlp</i> video download utility
-        <br><br>
+        A web interface for <i>yt-dlp</i> video download utility<br>
+        <br>
         \u00A9 2025 - RonLinu
         '''
     showAlert('YDownloader 1.1', '', msg)
 
-# --------------------------------------------------------------------
-# 'Check dependencies' button click
+# --------------------------------------
+# 'Check dependencies' button
 document.getElementById('dependencies').onclick = ->
     results = ''
     missingCount = 0
@@ -217,7 +198,8 @@ document.getElementById('dependencies').onclick = ->
 
     gatherResults = (name, result) ->
         results += "<b>#{name}&nbsp;</b><span style='color: "
-        if /is not|not found|#TIMEOUT/i.test result
+        regex = /is not|not found|#TIMEOUT/i
+        if regex.test(result)
             results += "red;'>#{failCross}</span><br>"
             missingCount++
         else
@@ -254,17 +236,37 @@ document.getElementById('dependencies').onclick = ->
     Swal.close()
     showAlert 'Status of dependencies', '', "<pre>#{results}</pre>"
 
-# --------------------------------------------------------------------
-# 'Help' button click
-document.getElementById('help').onclick = ->
-    msg = window.help
-    if server.platform() is 'linux'
-        # Add Linux 'xterm' to the list of dependencies
-        msg = msg.replace('</pre>', '- <b>xterm</b>  terminal utility</pre>')
-
-    showAlert('Help', '', msg, 'left')
+# --------------------------------------
+getVideoFolder = ->
+    switch server.platform()
+        when 'win32'  then '%USERPROFILE%\\Videos'
+        when 'linux'  then '$HOME/Videos'
+        when 'darwin' then '$HOME/Movies'
 
 # --------------------------------------
+# 'Open video folder' button
+document.getElementById('openfolder').onclick = ->
+    videoFolder = getVideoFolder()
+
+    cmd = switch server.platform()
+        when 'win32'
+            """explorer "#{videoFolder}" """
+        when 'linux'
+            """xdg-open "#{videoFolder}" """
+        when 'darwin'
+            """open "#{videoFolder}" """
+
+    msg = '''If the video folder does not appear,<br>
+            look behind the browser window or in the task bar.<br>
+            <br>
+            <i>click Ok to open the folder</i>'''
+
+    answer = await showAlert('Notice', '', msg)
+
+    if answer.isConfirmed
+        server.exec(cmd)
+
+# --------------------------------------------------------------------
 # 'Download' button click
 document.getElementById('download').onclick = ->
 
@@ -275,7 +277,6 @@ document.getElementById('download').onclick = ->
             urlObj.protocol is 'http:' or urlObj.protocol is 'https:'
         catch
             false
-    # ------------------------------------
 
     url = document.getElementById('videoUrl').value.trim()
 
@@ -286,25 +287,25 @@ document.getElementById('download').onclick = ->
         showAlert('', 'error', 'The Video URL is not valid.')
         return
 
-    # Remove any playlist, just download the main video
-    index = url.indexOf("?list")
-    if index != -1 then url = url.slice(0, index)
-
     option_resolution = ''
     option_subtitles  = ''
     option_merging    = ''
+    option_playlist   = ''
+    
+    # Ignore playlist, just download the main video (not reliable)
+    index = url.indexOf("&list")
+    if index != -1 then option_playlist = '--no-playlist '
 
     selectedResolution = document.querySelector('input[name="resolutions"]:checked').value
 
-    if selectedResolution is 'No cap'
-        option_resolution = '-f best '
-    else if selectedResolution is 'Audio only'
-        option_resolution = '-x --audio-format mp3 '
-    else
-        # Extract resolution number
-        resolution = parseInt(selectedResolution)
-        option_resolution = '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" '
-
+    option_resolution = switch selectedResolution 
+        when 'No cap'
+            '-f bestvideo+bestaudio/best ' # '-f best '
+        when 'Audio only'
+            '-x --audio-format mp3 '
+        else
+            resolution = parseInt(selectedResolution)
+            '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" '
 
     if selectedResolution isnt 'Audio only'
         option_merging = '--merge-output-format mkv --remux-video mkv '
@@ -323,12 +324,15 @@ document.getElementById('download').onclick = ->
          '--no-warnings ' +
          '-P "' + getVideoFolder() + '" ' +
          option_resolution +
+         option_playlist +
          option_subtitles +
          option_merging +
          '--embed-metadata ' +
          '--buffer-size 16M ' +
          '"' + url + '"'
 
+    console.log ytdlp_cmd
+    
     final_cmd = switch server.platform()
         when 'win32'
             """cmd /c start "" cmd /k #{ytdlp_cmd} """

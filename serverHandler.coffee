@@ -1,9 +1,9 @@
 ###
- This single function is executed on a browser client to handles the socket
+ This single function is executed on a browser client to handle the socket
  communication with a socket server running on Node.js.
 
- Its main purpose is to execute system commands and scripts with system
- level access using Node.js.
+ Its main purpose is to ask the server to execute system commands and
+ scripts with system level access using Node.js.
 
  There are few sub-functions provided to:
  - send a system command to be executed at server side
