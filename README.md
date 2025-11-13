@@ -3,7 +3,7 @@ Experimental web application to download videos using the well known video downl
 - yt-dlp for video download
 - ffmepg for video format conversion
 
-My goal is to create a web interface that can run JavaScript code with system level access using
+My goal is to create a web interface that can run JavaScript code with system level access using  
 a WebSocket server. The server acts as a bridge between a browser and the operating system.  
 The WebScoket server needs Node.js installed.
 
