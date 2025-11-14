@@ -9,7 +9,7 @@
     return document.getElementById('videoUrl').focus();
   };
 
-  resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'];
+  resolutions = ['360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)', '1440p (2K)', '2160p (4K)', '4320p (8K)', 'No cap'];
 
   languages = {
     'Afrikaans': 'af',
@@ -148,7 +148,7 @@
   })();
 
   (async function() {    // --------------------------------------
-    var match, msg, reply, result;
+    var match, msg, reply, update;
     // Check if new server version is available in 'latestServerCode' variable
     match = window.latestServerCode.match(/#\d+(\.\d+)?/);
     if (match == null) {
@@ -161,8 +161,8 @@ Do you want to update now?<br><br>`;
       reply = (await askConfirm('', 'warning', msg));
       if (reply.isConfirmed) {
         server.update(window.latestServerCode);
-        result = (await server.read());
-        if (result === 'Success') {
+        update = (await server.read());
+        if (update === 'Success') {
           msg = `The update was successfull!<br>
 <br>
 The application must be restarted for the update to take effect.`;
@@ -195,7 +195,7 @@ This is problably due to unexpected file/folder permissions.`;
     msg = `A web interface for <i>yt-dlp</i> video download utility<br>
 <br>
 \u00A9 2025 - RonLinu`;
-    return showAlert('YDownloader 1.1', '', msg);
+    return showAlert('YDownloader 1.1a', '', msg);
   };
 
   // --------------------------------------
@@ -302,15 +302,15 @@ look behind the browser window or in the task bar.<br>
     };
     url = document.getElementById('videoUrl').value.trim();
     if (!url) {
-      showAlert('', 'error', 'The Video URL field is empty.');
+      showAlert('', 'error', 'The URL field is empty.');
       return;
     } else if (!isValidUrl(url)) {
-      showAlert('', 'error', 'The Video URL is not valid.');
+      showAlert('', 'error', 'The URL is not valid.');
       return;
     }
     option_resolution = '';
     option_subtitles = '';
-    option_merging = '';
+    option_merging = '--merge-output-format mkv --remux-video mkv ';
     option_playlist = '';
     
     // Ignore playlist, just download the main video (not reliable)
@@ -323,26 +323,21 @@ look behind the browser window or in the task bar.<br>
       switch (selectedResolution) {
         case 'No cap':
           return '-f bestvideo+bestaudio/best '; // '-f best '
-        case 'Audio only':
-          return '-x --audio-format mp3 ';
         default:
           resolution = parseInt(selectedResolution);
           return '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" ';
       }
     })();
-    if (selectedResolution !== 'Audio only') {
-      option_merging = '--merge-output-format mkv --remux-video mkv ';
-      // Extract abbreviations of selected subtitle languages into an array
-      checkedLanguages = document.querySelectorAll('input[name="language"]:checked');
-      abbreviations = [];
-      for (i = 0, len = checkedLanguages.length; i < len; i++) {
-        checked = checkedLanguages[i];
-        abbreviations.push(languages[checked.value]);
-      }
-      if (abbreviations.length) {
-        subtitles = abbreviations.join(",");
-        option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs ';
-      }
+    // Extract abbreviations of selected subtitle languages into an array
+    checkedLanguages = document.querySelectorAll('input[name="language"]:checked');
+    abbreviations = [];
+    for (i = 0, len = checkedLanguages.length; i < len; i++) {
+      checked = checkedLanguages[i];
+      abbreviations.push(languages[checked.value]);
+    }
+    if (abbreviations.length) {
+      subtitles = abbreviations.join(",");
+      option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs ';
     }
     ytdlp_cmd = 'yt-dlp ' + '--concurrent-fragments 2 ' + '--no-warnings ' + '-P "' + getVideoFolder() + '" ' + option_resolution + option_playlist + option_subtitles + option_merging + '--embed-metadata ' + '--buffer-size 16M ' + '"' + url + '"';
     console.log(ytdlp_cmd);

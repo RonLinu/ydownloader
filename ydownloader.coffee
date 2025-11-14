@@ -7,7 +7,7 @@ window.onload = ->
 
 resolutions = [
     '360p (LD)', '480p (SD)', '720p (HD)', '1080p (full HD)',
-    '1440p (2K)', '2160p (4K)', 'No cap', 'Audio only'
+    '1440p (2K)', '2160p (4K)', '4320p (8K)', 'No cap'
 ]
 
 languages =
@@ -156,8 +156,8 @@ do ->
 
         if reply.isConfirmed
             server.update(window.latestServerCode)
-            result = await server.read()
-            if result is 'Success'
+            update = await server.read()
+            if update is 'Success'
                 msg = '''The update was successfull!<br>
                         <br>
                         The application must be restarted for the update to take effect.'''
@@ -185,7 +185,7 @@ document.getElementById('about').onclick = ->
         <br>
         \u00A9 2025 - RonLinu
         '''
-    showAlert('YDownloader 1.1', '', msg)
+    showAlert('YDownloader 1.1a', '', msg)
 
 # --------------------------------------
 # 'Check dependencies' button
@@ -281,15 +281,15 @@ document.getElementById('download').onclick = ->
     url = document.getElementById('videoUrl').value.trim()
 
     if not url
-        showAlert('', 'error', 'The Video URL field is empty.')
+        showAlert('', 'error', 'The URL field is empty.')
         return
     else if not isValidUrl(url)
-        showAlert('', 'error', 'The Video URL is not valid.')
+        showAlert('', 'error', 'The URL is not valid.')
         return
 
     option_resolution = ''
     option_subtitles  = ''
-    option_merging    = ''
+    option_merging    = '--merge-output-format mkv --remux-video mkv '
     option_playlist   = ''
     
     # Ignore playlist, just download the main video (not reliable)
@@ -301,23 +301,18 @@ document.getElementById('download').onclick = ->
     option_resolution = switch selectedResolution 
         when 'No cap'
             '-f bestvideo+bestaudio/best ' # '-f best '
-        when 'Audio only'
-            '-x --audio-format mp3 '
         else
             resolution = parseInt(selectedResolution)
             '-f "bv[height<=' + resolution + ']+ba/b[height<=' + resolution + ']" '
 
-    if selectedResolution isnt 'Audio only'
-        option_merging = '--merge-output-format mkv --remux-video mkv '
+    # Extract abbreviations of selected subtitle languages into an array
+    checkedLanguages = document.querySelectorAll('input[name="language"]:checked')
+    abbreviations = []
+    abbreviations.push(languages[checked.value]) for checked in checkedLanguages
 
-        # Extract abbreviations of selected subtitle languages into an array
-        checkedLanguages = document.querySelectorAll('input[name="language"]:checked')
-        abbreviations = []
-        abbreviations.push(languages[checked.value]) for checked in checkedLanguages
-
-        if abbreviations.length
-            subtitles = abbreviations.join(",")
-            option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs '
+    if abbreviations.length
+        subtitles = abbreviations.join(",")
+        option_subtitles = '--write-sub --ignore-errors --write-auto-subs --sub-langs ' + subtitles + ' --embed-subs '
 
     ytdlp_cmd = 'yt-dlp ' +
          '--concurrent-fragments 2 ' +

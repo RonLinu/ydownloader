@@ -6,8 +6,5 @@ In case of download error, try 'Resolution cap' = <b>No cap</b>.<br>
 <br>
 <hr>
 <br>
-Because of the ever-changing video environment on social media, 
-YDownloader is only as good as <i>yt-dlp</i> can be.<br><br>
-Downloading may be incomplete or not possible because of proprietary video
-formats, web site restrictions, or new video URL structures.
-`
+Successful downloading isn't always possible due to <i>yt-dlp</i>'s ability
+to keep up with the constantly evolving video technology and restrictions on social media.`
